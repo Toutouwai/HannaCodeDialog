@@ -24,19 +24,19 @@ Visit the module configuration screen to set any of the following:
 
 Place the cursor in the CKEditor window where you want to insert your Hanna tag, then select the tag from the "Insert Hanna tag" dropdown.
 
-!['Insert Hanna tag' dropdown](img/hcd-dropdown.png)
+!['Insert Hanna tag' dropdown](https://github.com/Toutouwai/HannaCodeDialog/raw/master/img/hcd-dropdown.png)
 
 ### Edit tag attributes in modal dialog
 
 Insert a tag using the dropdown or double-click an existing tag in the CKEditor window to edit the tag attributes in a modal dialog.
 
-![Modal dialog](img/hcd-dialog.png)
+![Modal dialog](https://github.com/Toutouwai/HannaCodeDialog/raw/master/img/hcd-dialog.png)
 
 ### Tags are widgets
 
 Hanna tags that have been inserted in a CKEditor window are "widgets" - they have a background colour for easy identification, are protected from accidental editing, and can be moved within the text by drag-and-drop.
 
-![Hanna tag widget](img/hcd-widget.png)
+![Hanna tag widget](https://github.com/Toutouwai/HannaCodeDialog/raw/master/img/hcd-widget.png)
 
 ### Options for tag attributes may be defined
 
@@ -100,6 +100,10 @@ Example for an existing attribute named "vegetables":
 ## Notes
 
 When creating or editing a Hanna tag you can view a basic cheatsheet outlining the HannaCodeDialog features relating to attributes below the "Attributes" config inputfield.
+
+## Troubleshooting
+
+HannaCodeDialog includes and automatically loads the third-party CKEditor plugins [Line Utilities](http://ckeditor.com/addon/lineutils) and [Widget](http://ckeditor.com/addon/widget). If you have added these plugins to your CKEditor field already for some purpose and experience problems with HannaCodeDialog try deactivating those plugins from the CKEditor field settings.
 
 ## License
 
