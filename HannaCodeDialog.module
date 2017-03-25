@@ -29,6 +29,7 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 			'summary' => "Enhances the use of Hanna tags in CKEditor fields, including the dialog-based editing of Hanna tags.",
 			'author' => 'Robin Sallis',
 			'autoload' => "template=admin",
+			'requires' => 'TextformatterHannaCode',
 			'icon' => 'clone',
 		);
 	}
