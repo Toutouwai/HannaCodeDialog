@@ -146,8 +146,8 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 		$settings = array();
 		$data = $this->modules->getModuleConfigData('TextformatterHannaCode');
 		$settings['iframe_path'] = "{$this->page->url}?id={$edited_page->id}&modal=1";
-		$settings['open_tag'] = $data['openTag'] ?: TextformatterHannaCode::DEFAULT_OPEN_TAG;
-		$settings['close_tag'] = $data['closeTag'] ?: TextformatterHannaCode::DEFAULT_CLOSE_TAG;
+		$settings['open_tag'] = isset($data['openTag']) ?: TextformatterHannaCode::DEFAULT_OPEN_TAG;
+		$settings['close_tag'] = isset($data['closeTag']) ?: TextformatterHannaCode::DEFAULT_CLOSE_TAG;
 		$settings['hanna_tags'] = $this->getDropdownTags($edited_page);
 		$settings['widget_colour'] = $this->widget_colour;
 		$settings['dialog_width'] = $this->dialog_width ?: 360;
