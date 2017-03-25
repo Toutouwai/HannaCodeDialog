@@ -80,7 +80,7 @@ For attributes which you have defined options for, you can choose the inputfield
 
 Inputfields that support the selection of a single option are `select` (this is the default inputfield for attributes with options so it isn't necessary to specify it if you want it) and `radios`.
 
-Inputfields that support the selection of a multiple options are `selectmultiple`, `asmselect` and  `checkboxes`.
+Inputfields that support the selection of multiple options are `selectmultiple`, `asmselect` and  `checkboxes`.
 
 You can also specify a `checkbox` inputfield - this is not for attributes with defined options but will limit an attribute to an integer value of 1 or 0.
 
