@@ -4,8 +4,6 @@ function iframeSrc(tag) {
 	return hcd_config.iframe_path + '&tag=' + encodeURIComponent(tag);
 }
 
-console.log('iframeSrc(tag): ' + iframeSrc(tag));
-
 CKEDITOR.dialog.add( 'hannadialog', function( editor ) {
 	return {
 		title: editor.lang.hannadialog.dialog_title,

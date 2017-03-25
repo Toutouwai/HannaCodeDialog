@@ -25,11 +25,10 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 	public static function getModuleInfo() {
 		return array(
 			'title' => 'Hanna Code Dialog',
-			'version' => '1',
+			'version' => '2',
 			'summary' => "Enhances the use of Hanna tags in CKEditor fields, including the dialog-based editing of Hanna tags.",
 			'author' => 'Robin Sallis',
 			'autoload' => "template=admin",
-			'requires' => 'TextformatterHannaCode',
 			'icon' => 'clone',
 		);
 	}
@@ -149,7 +148,7 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 		$settings['iframe_path'] = "{$this->page->url}?id={$edited_page->id}&modal=1";
 		$settings['open_tag'] = $data['openTag'] ?: TextformatterHannaCode::DEFAULT_OPEN_TAG;
 		$settings['close_tag'] = $data['closeTag'] ?: TextformatterHannaCode::DEFAULT_CLOSE_TAG;
-		$settings['hanna_tags'] = $this->getHannaTags(true, true);
+		$settings['hanna_tags'] = $this->getDropdownTags($edited_page);
 		$settings['widget_colour'] = $this->widget_colour;
 		$settings['dialog_width'] = $this->dialog_width ?: 360;
 		$settings['dialog_height'] = $this->dialog_height ?: 420;
@@ -188,6 +187,13 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 			}
 		}
 		return $tags;
+	}
+
+	/**
+	 * Get Hanna Code tags for toolbar dropdown
+	 */
+	public function ___getDropdownTags($page) {
+		return $this->getHannaTags(true, true);
 	}
 
 	/**
