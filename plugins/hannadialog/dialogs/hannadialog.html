@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Hello</title>
+
+	<style>
+		* { box-sizing:border-box; }
+		body { font-family:Arial,sans-serif; margin:0 7px; color:#232323; font-size:15px; }
+		#tag-head { text-transform:capitalize; padding:0 0 6px 0; border-bottom:1px solid #d0d0d0; margin:0 0 15px 0; font-size:20px; }
+		#hanna-form label { text-transform:capitalize; font-size:13px; display:block; margin:15px 0 4px; color:#7b7b7b; }
+		#hanna-form input { border:1px solid #d0d0d0; width:100%; padding:0 5px; font-size:15px; height:30px; }
+		#hanna-form select { border:1px solid #d0d0d0; width:100%; padding:0 16px 0 1px; font-size:15px; height:30px; }
+	</style>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script>
+		var tag_name;
+		$(function() {
+			var $form = $('#hanna-form');
+			var hanna_tags = parent.hcd_config.hanna_tags; // get all hanna tags
+			var hanna_tag = parent.hcd_config.hanna_tag.trim(); // get contents of tag that was opened
+			hanna_tag = hanna_tag.replace(/  +/g, ' '); // remove any double spaces
+			tag_name = hanna_tag.split(' ')[0]; // get tag name
+
+			// current attributes
+			var current_attributes = {};
+			attributes_string = hanna_tag.replace(tag_name, '').trim(); // get current attributes
+			if(attributes_string.length) {
+				var enclosure = attributes_string.slice(-1); // get attributes enclosure
+				attributes_array = attributes_string.split(enclosure + ' '); // get attributes as array
+				$.each(attributes_array, function(i, val) {
+					var pieces = val.split('=');
+					var label = pieces[0];
+					if(label.indexOf('_opts') !== -1) return; // there shouldn't be any '_opts' attributes here
+					var regex = new RegExp(enclosure, 'g');
+					current_attributes[label] = pieces[1].replace(regex, ''); // remove attributes enclosures;
+				});
+			}
+
+			// default attributes
+			var default_attributes = hanna_tags[tag_name]; // get default attributes for the tag
+			var selects = {};
+			// separate out any attributes that are in fact options for another attribute
+			default_attributes = jQuery.grep(default_attributes, function(val, i) {
+				if(val.indexOf('_opts=') !== -1) {
+					var pieces = val.split('=');
+					selects[pieces[0].replace('_opts', '')] = pieces[1].replace(/"/g, '');
+					return false;
+				}
+				return true;
+			});
+			if(default_attributes.length) {
+				// make form elements if any are needed
+				$.each(default_attributes, function(i, val){
+					var pieces = val.split('=');
+					var label = pieces[0];
+					var value = pieces[1].replace(/"/g, '');
+					var $input;
+					if(label in selects) {
+						// this attribute has some preset options
+						$input = $('<select id="' + label + '">');
+						var opts = selects[label].split('|');
+						$input.append($("<option>").attr('value','').text(''));
+						$.each(opts, function(i, val) {
+							$input.append($("<option>").attr('value',val).text(val));
+						});
+					} else {
+						$input = $('<input id="' + label + '" type="text">');
+					}
+					$form.append( '<label for="' + label + '">'+ label.replace('_', ' ') + '</label>' );
+					var set_value = current_attributes[label] || value;
+					$form.append($input.val(set_value));
+				});
+			} else {
+				$form.append('<p>This tag has no editable attributes.</p>');
+			}
+			$('#tag-head').text(tag_name.replace(/_/g, ' ')); // set dialog heading
+		});
+	</script>
+</head>
+<body>
+
+<div id="hanna-form">
+	<h2 id="tag-head"></h2>
+</div>
+
+</body>
+</html>
