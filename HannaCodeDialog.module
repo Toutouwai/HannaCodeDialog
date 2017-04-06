@@ -63,7 +63,7 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 </style>
 <div class='hcd-cheatsheet'>
 
-	<p>Use a double underscore to to add <span class='mono'>type</span>, <span class='mono'>options</span>, <span class='mono'>description</span> or <span class='mono'>notes</span> settings for an attribute.</p>
+	<p>Use a double underscore to add <span class='mono'>type</span>, <span class='mono'>options</span>, <span class='mono'>description</span> or <span class='mono'>notes</span> settings for an attribute.</p>
 	
 	<p><strong>For an attributed named 'vegetables'...</strong></p>
 	
