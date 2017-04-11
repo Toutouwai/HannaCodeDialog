@@ -16,13 +16,13 @@ CKEDITOR.dialog.add( 'hannadialog', function( editor ) {
 				elements : [
 					{
 						type: 'html',
-						html: '<iframe id="hanna_iframe" src="' + iframeSrc(tag) + '" frameborder="0" style="width:' + hcd_config.dialog_width + 'px; height:' + hcd_config.dialog_height + 'px;"></iframe>'
+						html: '<iframe id="hanna_iframe_' + editor.id + '" src="' + iframeSrc(tag) + '" frameborder="0" style="width:' + hcd_config.dialog_width + 'px; height:' + hcd_config.dialog_height + 'px;"></iframe>'
 					}
 				]
 			}
 		],
 		onShow: function() {
-			var iframe = this.getElement().getDocument().getById('hanna_iframe');
+			var iframe = this.getElement().getDocument().getById('hanna_iframe_' + editor.id);
 			$dialog_iframe = $('#' + iframe.getAttribute('id')); // iframe to jQuery object
 			iframe.setAttribute('src', iframeSrc(tag));
 		},
@@ -33,7 +33,7 @@ CKEDITOR.dialog.add( 'hannadialog', function( editor ) {
 		},
 		onOk: function() {
 			// clear src to avoid flash of old iframe src on next load
-			var iframe = this.getElement().getDocument().getById('hanna_iframe');
+			var iframe = this.getElement().getDocument().getById('hanna_iframe_' + editor.id);
 			iframe.setAttribute('src', '');
 			// write tag back to editor
 			var tag_name = $dialog_iframe.contents().find('#hanna-form').data('name');
