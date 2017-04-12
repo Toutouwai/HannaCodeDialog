@@ -28,7 +28,7 @@ CKEDITOR.dialog.add( 'hannadialog', function( editor ) {
 		},
 		onCancel: function() {
 			// clear src to avoid flash of old iframe src on next load
-			var iframe = this.getElement().getDocument().getById('hanna_iframe');
+			var iframe = this.getElement().getDocument().getById('hanna_iframe_' + editor.id);
 			iframe.setAttribute('src', '');
 		},
 		onOk: function() {
