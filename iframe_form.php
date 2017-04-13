@@ -68,7 +68,7 @@ foreach($default_attributes as $key => $value) {
 	    $f = $this->modules->get('InputfieldCheckbox');
 	    $checked = isset($current_attributes[$key]) ? (int) $current_attributes[$key] : (int) $value;
 	    $f->attr('checked', $checked === 1 ? 'checked' : '');
-    } elseif(strlen($current_attributes[$key]) > $textarea_breakpoint) {
+    } elseif( isset($types[$key]) && strtolower($types[$key]) === 'textarea' ) {
 	    $f = $this->modules->get('InputfieldTextarea');
 	    $f->value = isset($current_attributes[$key]) ? $current_attributes[$key] : $value;
     } else {
