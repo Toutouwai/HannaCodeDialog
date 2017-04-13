@@ -16,6 +16,7 @@ Visit the module configuration screen to set any of the following:
 
 * Exclude prefix: Hanna tags named with this prefix will not appear in the CKEditor toolbar dropdown menu for Hanna tag insertion.
 * Exclude Hanna tags: Hanna tags selected here will not appear in the CKEditor toolbar dropdown menu for Hanna tag insertion.
+* Textarea breakpoint: If the length of a text attribute value is greater than this then a textarea is used instead of a text input.
 * Background colour of tag widgets: you can customise the background colour used for Hanna tags in CKEditor if you like.
 * Dialog width: in pixels
 * Dialog height: in pixels
