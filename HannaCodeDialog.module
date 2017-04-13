@@ -25,7 +25,7 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 	public static function getModuleInfo() {
 		return array(
 			'title' => 'Hanna Code Dialog',
-			'version' => '7',
+			'version' => '8',
 			'summary' => "Enhances the use of Hanna tags in CKEditor fields, including the dialog-based editing of Hanna tags.",
 			'author' => 'Robin Sallis',
 			'autoload' => "template=admin",
@@ -105,12 +105,13 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 		$edited_page = $event->object->getPage();
 
 		// render Hanna tag form if tag variable in $input
-		$tag = $this->sanitizer->text($this->input->get->tag);
+		$tag = $this->sanitizer->textarea($this->input->get->tag);
 		if($tag) {
 			$event->replace = true; // don't render normal page edit form
 			$current_attributes = $this->getAttributes($tag);
 			if(!isset($current_attributes['name'])) $current_attributes['name'] = trim($tag);
-			$vars = array( 'current_attributes' => $current_attributes, 'hanna_tags' => $this->getHannaTags(), 'edited_page' => $edited_page );
+			$textarea_breakpoint = $this->textarea_breakpoint ?: 50;
+			$vars = array( 'current_attributes' => $current_attributes, 'hanna_tags' => $this->getHannaTags(), 'edited_page' => $edited_page, 'textarea_breakpoint' => $textarea_breakpoint );
 			$options = array( 'defaultPath' => $this->config->paths->{$this->className} );
 			$event->return = wireRenderFile("iframe_form", $vars, $options);
 		}
@@ -247,9 +248,9 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 		$f = $this->modules->get('InputfieldText');
 		$f_name = 'exclude_prefix';
 		$f->name = $f_name;
-		$f->label = $this->_("Exclude prefix");
+		$f->label = $this->_('Exclude prefix');
 		$f->description = $this->_('Tags that have this prefix will not appear in the toolbar dropdown.');
-		$f->columnWidth = 50;
+		$f->columnWidth = 33;
 		$f->value = $this->$f_name ?: '_';
 		$inputfields->add($f);
 
@@ -258,25 +259,36 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 		$f->name = $f_name;
 		$f->label = $this->_('Exclude Hanna tags');
 		$f->description = $this->_('Tags that are selected here will not appear in the toolbar dropdown.');
-		$f->columnWidth = 50;
+		$f->columnWidth = 33;
 		foreach($this->getHannaTags(true) as $select_option) {
 			$f->addOption($select_option);
 		}
 		$f->value = $this->$f_name;
 		$inputfields->add($f);
 
+		$f = $this->modules->get('InputfieldInteger');
+		$f_name = 'textarea_breakpoint';
+		$f->name = $f_name;
+		$f->label = $this->_('Textarea breakpoint');
+		$f->description = $this->_('Use a textarea input for attribute values longer than this.');
+		$f->columnWidth = 34;
+		$f->inputType = 'number';
+		$f->min = 0;
+		$f->value = $this->$f_name ?: 50;
+		$inputfields->add($f);
+
 		$f = $this->modules->get('InputfieldText');
 		$f_name = 'widget_colour';
 		$f->name = $f_name;
 		$f->label = $this->_('Background colour of tag widgets');
-		$f->columnWidth = 34;
+		$f->columnWidth = 33;
 		$f->value = $this->$f_name ?: '#d3eaf2';
 		$inputfields->add($f);
 
 		$f = $this->modules->get('InputfieldInteger');
 		$f_name = 'dialog_width';
 		$f->name = $f_name;
-		$f->label = $this->_("Dialog width");
+		$f->label = $this->_('Dialog width');
 		$f->columnWidth = 33;
 		$f->inputType = 'number';
 		$f->min = 0;
@@ -286,8 +298,8 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 		$f = $this->modules->get('InputfieldInteger');
 		$f_name = 'dialog_height';
 		$f->name = $f_name;
-		$f->label = $this->_("Dialog height");
-		$f->columnWidth = 33;
+		$f->label = $this->_('Dialog height');
+		$f->columnWidth = 34;
 		$f->inputType = 'number';
 		$f->min = 0;
 		$f->value = $this->$f_name ?: 420;

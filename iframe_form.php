@@ -1,4 +1,5 @@
 <?php
+// current attribute values
 $tag_name = $current_attributes['name'];
 unset($current_attributes['name']);
 
@@ -67,6 +68,9 @@ foreach($default_attributes as $key => $value) {
 	    $f = $this->modules->get('InputfieldCheckbox');
 	    $checked = isset($current_attributes[$key]) ? (int) $current_attributes[$key] : (int) $value;
 	    $f->attr('checked', $checked === 1 ? 'checked' : '');
+    } elseif(strlen($current_attributes[$key]) > $textarea_breakpoint) {
+	    $f = $this->modules->get('InputfieldTextarea');
+	    $f->value = isset($current_attributes[$key]) ? $current_attributes[$key] : $value;
     } else {
 	    $f = $this->modules->get('InputfieldText');
 	    $f->value = isset($current_attributes[$key]) ? $current_attributes[$key] : $value;
