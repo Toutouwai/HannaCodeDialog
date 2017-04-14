@@ -47,6 +47,8 @@ CKEDITOR.dialog.add( 'hannadialog', function( editor ) {
 					value = $(this).find('input').val();
 				} else if( $(this).hasClass('InputfieldTextarea') ) {
 					value = $(this).find('textarea').val();
+					// remove line breaks because they break CKEditor widget
+					value = value.replace(/(\r\n|\n|\r)/gm, '');
 				} else if( $(this).hasClass('InputfieldSelect') ) {
 					value = $(this).find('select').val();
 				}
