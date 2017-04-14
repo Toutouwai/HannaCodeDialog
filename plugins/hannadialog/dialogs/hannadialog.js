@@ -45,6 +45,8 @@ CKEDITOR.dialog.add( 'hannadialog', function( editor ) {
 				var value = '';
 				if( $(this).hasClass('InputfieldText') ) {
 					value = $(this).find('input').val();
+				} else if( $(this).hasClass('InputfieldTextarea') ) {
+					value = $(this).find('textarea').val();
 				} else if( $(this).hasClass('InputfieldSelect') ) {
 					value = $(this).find('select').val();
 				}
