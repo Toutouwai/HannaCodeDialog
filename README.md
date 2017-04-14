@@ -78,7 +78,7 @@ And the code for the `_images_on_page` tag:
 
 You can choose the inputfield that is used for an attribute in the dialog.
 
-For text attributes the supported inputfields are `text` (this is the default inputfield for text attributes so it isn't necessary to specify it if you want it) and `textarea`.
+For text attributes the supported inputfields are `text` (this is the default inputfield for text attributes so it isn't necessary to specify it if you want it) and `textarea`. Note: any manual line breaks inside a textarea are removed because these will break the CKEditor tag widget.
 
 Inputfields that support the selection of a single option are `select` (this is the default inputfield for attributes with options so it isn't necessary to specify it if you want it) and `radios`.
 
