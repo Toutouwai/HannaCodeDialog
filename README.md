@@ -85,6 +85,7 @@ You can hook `HannaCodeDialog::prepareOptions` to define or manipulate options f
 * `tag_name` The name of the Hanna tag
 * `page` The page being edited
 
+If you hook after `HannaCodeDialog::prepareOptions` then your hook should set `$event->return` to an array of option values, or an associative array in the form of `$value => $label`.
 
 ### Choice of inputfield for attribute
 

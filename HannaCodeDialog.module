@@ -211,6 +211,7 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 	 * Prepare options for use in dialog inputfield
 	 *
 	 * @param string $options_string String of options delimited with a pipe character
+	 * @param string $attribute_name The name of the attribute the options are for
 	 * @param string $tag_name The name of the Hanna tag
 	 * @param object $page The page being edited
 	 * @return array A regular array of option values, or an associative array $value => $label
