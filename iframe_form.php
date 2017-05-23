@@ -53,16 +53,24 @@ foreach($default_attributes as $key => $value) {
 		    }
 	    }
 	    $f = $this->modules->get($if);
-	    $select_options = $options[$key];
+	    $select_options_string = $options[$key];
 	    $data = $this->modules->getModuleConfigData('TextformatterHannaCode');
 	    $open_tag = isset($data['openTag']) ? $data['openTag'] : TextformatterHannaCode::DEFAULT_OPEN_TAG;
-	    if(strpos($select_options, $open_tag) !== false) {
-		    $this->modules->TextformatterHannaCode->formatValue($edited_page, new Field(), $select_options);
+	    if(strpos($select_options_string, $open_tag) !== false) {
+		    $this->modules->TextformatterHannaCode->formatValue($edited_page, new Field(), $select_options_string);
 	    }
-	    $select_options = explode('|', $select_options);
-	    foreach ($select_options as $select_option) {
-		    $f->addOption($select_option);
+	    $select_options = $this->modules->HannaCodeDialog->prepareOptions($select_options_string, $key, $tag_name, $edited_page);
+	    if(array_values($select_options) === $select_options) {
+	    	// regular array
+		    foreach($select_options as $select_option) {
+			    $f->addOption($select_option);
+		    }
+	    } else {
+	    	// associative array
+		    $f->addOptions($select_options);
 	    }
+
+
 	    $f->value = isset($current_attributes[$key]) ? $current_attributes[$key] : $value;
     } elseif( isset($types[$key]) && strtolower($types[$key]) === 'checkbox' ) {
 	    $f = $this->modules->get('InputfieldCheckbox');

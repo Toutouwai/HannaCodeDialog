@@ -28,6 +28,8 @@ Place the cursor in the CKEditor window where you want to insert your Hanna tag,
 
 !['Insert Hanna tag' dropdown](https://github.com/Toutouwai/HannaCodeDialog/raw/master/img/hcd-dropdown.png)
 
+Advanced: if you want to control which tags appear in the dropdown on particular pages or templates you can hook `HannaCodeDialog::getDropdownTags`. See the forum support thread for [examples](https://processwire.com/talk/topic/15902-hannacodedialog/?do=findComment&comment=141902) .
+
 ### Edit tag attributes in modal dialog
 
 Insert a tag using the dropdown or double-click an existing tag in the CKEditor window to edit the tag attributes in a modal dialog.
@@ -73,6 +75,16 @@ And the code for the `_images_on_page` tag:
         $image_names = array_unique( array_merge($image_names, $page->$image_field->explode('name') ) );
     }
     echo implode('|', $image_names);
+
+### Advanced: define or manipulate options in a hook
+
+You can hook `HannaCodeDialog::prepareOptions` to define or manipulate options for a Hanna tag attribute. Your Hanna tag must include a `someattribute__options` attribute in order for the hook to fire. The `prepareOptions` method receives the following arguments that can be used in your hook:
+
+* `options_string` Any existing string of options you have set for the attribute
+* `attribute_name` The name of the attribute the options are for
+* `tag_name` The name of the Hanna tag
+* `page` The page being edited
+
 
 ### Choice of inputfield for attribute
 

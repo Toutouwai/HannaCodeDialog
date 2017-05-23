@@ -25,13 +25,18 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 	public static function getModuleInfo() {
 		return array(
 			'title' => 'Hanna Code Dialog',
-			'version' => '11',
+			'version' => '12',
 			'summary' => "Enhances the use of Hanna tags in CKEditor fields, including the dialog-based editing of Hanna tags.",
 			'author' => 'Robin Sallis',
 			'autoload' => "template=admin",
 			'icon' => 'clone',
 		);
 	}
+
+	/**
+	 * Array of Hanna tags that have no attributes
+	 */
+	protected $tags_no_attributes = array();
 
 	/**
 	 * Ready
@@ -146,6 +151,7 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 		$settings['open_tag'] = isset($data['openTag']) ? $data['openTag'] : TextformatterHannaCode::DEFAULT_OPEN_TAG;
 		$settings['close_tag'] = isset($data['closeTag']) ? $data['closeTag'] : TextformatterHannaCode::DEFAULT_CLOSE_TAG;
 		$settings['hanna_tags'] = $this->getDropdownTags($edited_page);
+		$settings['tags_no_attributes'] = $this->tags_no_attributes;
 		$settings['widget_colour'] = $this->widget_colour ?: '#d3eaf2';
 		$settings['dialog_width'] = $this->dialog_width ?: 360;
 		$settings['dialog_height'] = $this->dialog_height ?: 420;
@@ -166,9 +172,12 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 		$hanna = $this->modules->get('TextformatterHannaCode');
 		// fetch Hanna Code tags from database
 		$tags = array();
+		$tags_no_attributes = array();
 		$result = $this->db->query("SELECT name, code FROM hanna_code ORDER BY name");
 		while($row = $result->fetch_row()) {
 			list($name, $code) = $row;
+			// if this tag has no attributes then add it to $tags_no_attributes
+			if( strpos($code, 'hc_attr*/') === false ) $tags_no_attributes[] = $name;
 			if($name_only) {
 				if($filter_tags) {
 					$exclude_prefix = $this->exclude_prefix ?: '_';
@@ -183,14 +192,33 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 				$tags[$name] = $attrs;
 			}
 		}
+		$this->tags_no_attributes = $tags_no_attributes;
 		return $tags;
 	}
 
 	/**
 	 * Get Hanna Code tags for toolbar dropdown
+	 *
+	 * @param object $page The page being edited
+	 * @return array Array of tag names
+	 *
 	 */
 	public function ___getDropdownTags($page) {
 		return $this->getHannaTags(true, true);
+	}
+
+	/**
+	 * Prepare options for use in dialog inputfield
+	 *
+	 * @param string $options_string String of options delimited with a pipe character
+	 * @param string $tag_name The name of the Hanna tag
+	 * @param object $page The page being edited
+	 * @return array A regular array of option values, or an associative array $value => $label
+	 *
+	 */
+	public function ___prepareOptions($options_string, $attribute_name, $tag_name, $page) {
+		$options = explode('|', $options_string);
+		return $options;
 	}
 
 	/**
