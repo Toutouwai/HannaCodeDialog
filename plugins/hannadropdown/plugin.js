@@ -32,8 +32,12 @@ CKEDITOR.plugins.add('hannadropdown',
 
 			onClick: function( value )
 			{
-				tag = value;
-				editor.openDialog('hannadialog');
+				if(hcd_config.tags_no_attributes.indexOf(value) !== -1) {
+					editor.insertHtml(hcd_config.open_tag + value + hcd_config.close_tag);
+				} else {
+					tag = value;
+					editor.openDialog('hannadialog');
+				}
 			}
 		});
 	}
