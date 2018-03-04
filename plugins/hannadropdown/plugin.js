@@ -1,7 +1,6 @@
 CKEDITOR.plugins.add('hannadropdown',
 {
 	requires : ['richcombo'],
-	lang: ['en'],
 	init : function( editor )
 	{
 		// hanna tag names for the dropdown
@@ -10,9 +9,9 @@ CKEDITOR.plugins.add('hannadropdown',
 		// add the menu to the editor
 		editor.ui.addRichCombo('HannaDropdown',
 		{
-			label: editor.lang.hannadropdown.dropdown_title,
-			title: editor.lang.hannadropdown.dropdown_title,
-			voiceLabel: editor.lang.hannadropdown.dropdown_title,
+			label: hcd_config.dropdown_title,
+			title: hcd_config.dropdown_title,
+			voiceLabel: hcd_config.dropdown_title,
 			className: 'cke_format',
 			multiSelect:false,
 			panel:
@@ -23,7 +22,7 @@ CKEDITOR.plugins.add('hannadropdown',
 
 			init: function()
 			{
-				this.startGroup( editor.lang.hannadropdown.dropdown_title );
+				this.startGroup( hcd_config.dropdown_title );
 				for (var i = 0; i < tag_names.length; i++)
 				{
 					this.add(tag_names[i], tag_names[i], tag_names[i]);

@@ -5,7 +5,6 @@ function escapeRegExp(str) {
 
 CKEDITOR.plugins.add( 'hannadialog', {
 	requires: 'widget,lineutils,dialog',
-	lang: ['en'],
 
 	onLoad: function() {
 		CKEDITOR.addCss( '.cke_hannatag { background-color:' + hcd_config.widget_colour + '; }' );

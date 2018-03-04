@@ -25,7 +25,7 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 	public static function getModuleInfo() {
 		return array(
 			'title' => 'Hanna Code Dialog',
-			'version' => '13',
+			'version' => '0.1.4',
 			'summary' => "Enhances the use of Hanna tags in CKEditor fields, including the dialog-based editing of Hanna tags.",
 			'author' => 'Robin Sallis',
 			'autoload' => "template=admin",
@@ -155,6 +155,8 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 		$settings['widget_colour'] = $this->widget_colour ?: '#d3eaf2';
 		$settings['dialog_width'] = $this->dialog_width ?: 360;
 		$settings['dialog_height'] = $this->dialog_height ?: 420;
+		$settings['dropdown_title'] = $this->_('Insert Hanna tag');
+		$settings['dialog_title'] = $this->_('Hanna Code Dialog');
 		$this->config->js($this->className(), $settings);
 
 		// add CSS

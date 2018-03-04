@@ -6,7 +6,7 @@ function iframeSrc(tag) {
 
 CKEDITOR.dialog.add( 'hannadialog', function( editor ) {
 	return {
-		title: editor.lang.hannadialog.dialog_title,
+		title: hcd_config.dialog_title,
 		minWidth: 200,
 		minHeight: 200,
 		resizable: CKEDITOR.DIALOG_RESIZE_NONE,
