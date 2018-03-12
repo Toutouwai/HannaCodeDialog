@@ -44,7 +44,7 @@ CKEDITOR.plugins.add( 'hannadialog', {
 
 	afterInit: function( editor ) {
 		
-		var pattern = new RegExp(escapeRegExp(hcd_config.open_tag) + '.+' + escapeRegExp(hcd_config.close_tag), "g");
+		var pattern = new RegExp(escapeRegExp(hcd_config.open_tag) + '.*?' + escapeRegExp(hcd_config.close_tag), "g");
 
 		editor.dataProcessor.dataFilter.addRules( {
 			text: function( text, node ) {
