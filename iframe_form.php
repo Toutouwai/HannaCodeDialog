@@ -101,6 +101,7 @@ foreach($default_attributes as $key => $value) {
 	body.modal .pw-content #tag-head { margin:0 0 15px 0; font-size:20px; }
 	.InputfieldForm { margin-bottom:0; }
 	.pw-content p.hanna-message { margin:-5px 0 0; }
+	body.AdminThemeUikit #main { padding:0 !important; margin:10px 0 20px !important; }
 </style>
 
 <h2 id="tag-head"><?= ucfirst(str_replace('_', ' ', $tag_name)) ?></h2>
