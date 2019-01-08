@@ -25,7 +25,7 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 	public static function getModuleInfo() {
 		return array(
 			'title' => 'Hanna Code Dialog',
-			'version' => '0.1.7',
+			'version' => '0.1.8',
 			'summary' => "Enhances the use of Hanna tags in CKEditor fields, including the dialog-based editing of Hanna tags.",
 			'author' => 'Robin Sallis',
 			'autoload' => "template=admin",
@@ -125,7 +125,7 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 		$js_config = $this->config->js();
 		foreach ($js_config as $key => $value) {
 			if(strpos($key, 'InputfieldCKEditor_') !== false) {
-				$js .= "config.$key.extraPlugins += ',lineutils,widget,hannadropdown,hannadialog';";
+				$js .= "config.$key.extraPlugins += ',hannadropdown,hannadialog';";
 			}
 		}
 		// return if no CKEditor fields with TextformatterHannaCode found
@@ -137,8 +137,6 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 		$js = "
 		var hcd_config = config.HannaCodeDialog;
 		var tag = null;
-		CKEDITOR.plugins.addExternal('lineutils', '{$plugins_path}/lineutils/');
-		CKEDITOR.plugins.addExternal('widget', '{$plugins_path}/widget/');
 		CKEDITOR.plugins.addExternal('hannadropdown', '{$plugins_path}/hannadropdown/');
 		CKEDITOR.plugins.addExternal('hannadialog', '{$plugins_path}/hannadialog/');
 		" . $js;

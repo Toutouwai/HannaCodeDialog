@@ -8,7 +8,7 @@ CKEDITOR.plugins.add( 'hannadialog', {
 
 	onLoad: function() {
 		CKEDITOR.addCss( '.cke_hannatag { background-color:' + hcd_config.widget_colour + '; }' );
-		CKEDITOR.addCss( '.cke_widget_wrapper:hover > .cke_widget_element { outline:2px solid ' + hcd_config.widget_colour + ' !important; }' );
+		CKEDITOR.addCss( '.cke_widget_wrapper:hover > .cke_hannatag, .cke_widget_focused .cke_hannatag { outline:2px solid ' + hcd_config.widget_colour + ' !important; }' );
 	},
 
 	init: function( editor ) {

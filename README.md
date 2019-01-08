@@ -26,7 +26,7 @@ Visit the module configuration screen to set any of the following:
 
 Place the cursor in the CKEditor window where you want to insert your Hanna tag, then select the tag from the "Insert Hanna tag" dropdown.
 
-!['Insert Hanna tag' dropdown](https://github.com/Toutouwai/HannaCodeDialog/raw/master/img/hcd-dropdown.png)
+!['Insert Hanna tag' dropdown](https://user-images.githubusercontent.com/1538852/50802865-0c394480-134d-11e9-873c-f86273bf1981.png)
 
 Advanced: if you want to control which tags appear in the dropdown on particular pages or templates you can hook `HannaCodeDialog::getDropdownTags`. See the forum support thread for [examples](https://processwire.com/talk/topic/15902-hannacodedialog/?do=findComment&comment=141902) .
 
@@ -34,13 +34,13 @@ Advanced: if you want to control which tags appear in the dropdown on particular
 
 Insert a tag using the dropdown or double-click an existing tag in the CKEditor window to edit the tag attributes in a modal dialog.
 
-![Modal dialog](https://github.com/Toutouwai/HannaCodeDialog/raw/master/img/hcd-dialog.png)
+![Modal dialog](https://user-images.githubusercontent.com/1538852/50802862-08a5bd80-134d-11e9-91b5-a051b59bccef.png)
 
 ### Tags are widgets
 
 Hanna tags that have been inserted in a CKEditor window are "widgets" - they have a background colour for easy identification, are protected from accidental editing, and can be moved within the text by drag-and-drop.
 
-![Hanna tag widget](https://github.com/Toutouwai/HannaCodeDialog/raw/master/img/hcd-widget.png)
+![Hanna tag widget]![hcd-widget](https://user-images.githubusercontent.com/1538852/50802867-0d6a7180-134d-11e9-9455-b870c8755946.png)
 
 ### Options for tag attributes may be defined
 
