@@ -146,58 +146,58 @@ The hook code in /site/ready.php:
 ```php
 $wire->addHookAfter('HannaCodeDialog::buildForm', function(HookEvent $event) {
 
-	// The Hanna tag that is being opened in the dialog
-	$tag_name = $event->arguments(0);
+    // The Hanna tag that is being opened in the dialog
+    $tag_name = $event->arguments(0);
 
-	// Other arguments if you need them
-	/* @var Page $edited_page */
-	$edited_page = $event->arguments(1); // The page open in Page Edit
-	$current_attributes = $event->arguments(2); // The current attribute values
-	$default_attributes = $event->arguments(3); // The default attribute values
+    // Other arguments if you need them
+    /* @var Page $edited_page */
+    $edited_page = $event->arguments(1); // The page open in Page Edit
+    $current_attributes = $event->arguments(2); // The current attribute values
+    $default_attributes = $event->arguments(3); // The default attribute values
 
-	// The form rendered in the dialog
-	/* @var InputfieldForm $form */
-	$form = $event->return;
+    // The form rendered in the dialog
+    /* @var InputfieldForm $form */
+    $form = $event->return;
 
-	if($tag_name === 'meal') {
+    if($tag_name === 'meal') {
 
-		$modules = $event->wire('modules');
+        $modules = $event->wire('modules');
 
-		/* @var InputfieldCheckboxes $f */
-		$f = $modules->InputfieldCheckboxes;
-		$f->name = 'vegetables'; // Set name to match attribute
-		$f->id = 'vegetables'; // Set id to match attribute
-		$f->label = 'Vegetables';
-		$f->description = 'Please select some vegetables.';
-		$f->notes = "If you don't eat your vegetables you can't have any pudding.";
-		$f->addOptions(['Carrot', 'Cabbage', 'Celery'], false);
-		$form->add($f);
+        /* @var InputfieldCheckboxes $f */
+        $f = $modules->InputfieldCheckboxes;
+        $f->name = 'vegetables'; // Set name to match attribute
+        $f->id = 'vegetables'; // Set id to match attribute
+        $f->label = 'Vegetables';
+        $f->description = 'Please select some vegetables.';
+        $f->notes = "If you don't eat your vegetables you can't have any pudding.";
+        $f->addOptions(['Carrot', 'Cabbage', 'Celery'], false);
+        $form->add($f);
 
-		/* @var InputfieldRadios $f */
-		$f = $modules->InputfieldRadios;
-		$f->name = 'meat';
-		$f->id = 'meat';
-		$f->label = 'Meat';
-		$f->addOptions(['Pork', 'Beef', 'Chicken', 'Lamb'], false);
-		$form->add($f);
+        /* @var InputfieldRadios $f */
+        $f = $modules->InputfieldRadios;
+        $f->name = 'meat';
+        $f->id = 'meat';
+        $f->label = 'Meat';
+        $f->addOptions(['Pork', 'Beef', 'Chicken', 'Lamb'], false);
+        $form->add($f);
 
-		/* @var InputfieldSelect $f */
-		$f = $modules->InputfieldSelect;
-		$f->name = 'cooking_style';
-		$f->id = 'cooking_style';
-		$f->label = 'How would you like it cooked?';
-		$f->addOptions(['Fried', 'Boiled', 'Baked'], false);
-		$form->add($f);
+        /* @var InputfieldSelect $f */
+        $f = $modules->InputfieldSelect;
+        $f->name = 'cooking_style';
+        $f->id = 'cooking_style';
+        $f->label = 'How would you like it cooked?';
+        $f->addOptions(['Fried', 'Boiled', 'Baked'], false);
+        $form->add($f);
 
-		/* @var InputfieldText $f */
-		$f = $modules->InputfieldText;
-		$f->name = 'comments';
-		$f->id = 'comments';
-		$f->label = 'Comments for the chef';
-		$f->showIf = 'cooking_style=Fried';
-		$form->add($f);
+        /* @var InputfieldText $f */
+        $f = $modules->InputfieldText;
+        $f->name = 'comments';
+        $f->id = 'comments';
+        $f->label = 'Comments for the chef';
+        $f->showIf = 'cooking_style=Fried';
+        $form->add($f);
 
-	}
+    }
 
 });
 ````
