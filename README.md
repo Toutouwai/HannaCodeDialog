@@ -40,7 +40,7 @@ Insert a tag using the dropdown or double-click an existing tag in the CKEditor 
 
 Hanna tags that have been inserted in a CKEditor window are "widgets" - they have a background colour for easy identification, are protected from accidental editing, and can be moved within the text by drag-and-drop.
 
-![Hanna tag widget]![hcd-widget](https://user-images.githubusercontent.com/1538852/50802867-0d6a7180-134d-11e9-9455-b870c8755946.png)
+![Widget](https://user-images.githubusercontent.com/1538852/50802867-0d6a7180-134d-11e9-9455-b870c8755946.png)
 
 ### Options for tag attributes may be defined
 
