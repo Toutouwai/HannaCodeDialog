@@ -1,11 +1,10 @@
-CKEDITOR.plugins.add('hannadropdown',
-{
+CKEDITOR.plugins.add('hannadropdown', {
 	requires : ['richcombo'],
 	init : function( editor ) {
-		// hanna tag names for the dropdown
+		// Hanna tag names for the dropdown
 		var tag_names = hcd_config.hanna_tags;
 
-		// add the menu to the editor
+		// Add the menu to the editor
 		editor.ui.addRichCombo('HannaDropdown', {
 			label: hcd_config.dropdown_title,
 			title: hcd_config.dropdown_title,

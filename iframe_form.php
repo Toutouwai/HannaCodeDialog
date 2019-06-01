@@ -1,100 +1,125 @@
-<?php
-// current attribute values
+<?php namespace ProcessWire;
+
+/* @var array $current_attributes */
+/* @var array $hanna_tags */
+/* @var Page $edited_page */
+/* @var Modules $modules */
+
+// Current attribute values
 $tag_name = $current_attributes['name'];
 unset($current_attributes['name']);
 
-// default attributes for tag
+// Default attributes for tag
 $default_attributes = isset($hanna_tags[$tag_name]) ? $hanna_tags[$tag_name] : array();
+
+// Get form from hookable method
+$form = $modules->HannaCodeDialog->buildForm($tag_name, $edited_page, $current_attributes, $default_attributes);
+
+// Work out inputfield attributes from default attributes
 $options = array();
 $types = array();
 $descriptions = array();
 $notes = array();
 foreach($default_attributes as $key => $value) {
-    if(substr($key, -9) === '__options') {
-    	$options[substr($key, 0, -9)] = $value;
-    	unset($default_attributes[$key]);
-    }
-	if(substr($key, -6) === '__type') {
-		$types[substr($key, 0, -6)] = $value;
+	if(strpos($key, '__') === false) continue;
+	if(substr($key, -9) === '__options') {
+		$options[substr($key, 0, -9)] = $value;
 		unset($default_attributes[$key]);
-	}
-	if(substr($key, -13) === '__description') {
+	} elseif(substr($key, -6) === '__type') {
+		$types[substr($key, 0, -6)] = strtolower($value);
+		unset($default_attributes[$key]);
+	} elseif(substr($key, -13) === '__description') {
 		$descriptions[substr($key, 0, -13)] = $value;
 		unset($default_attributes[$key]);
-	}
-	if(substr($key, -7) === '__notes') {
+	} elseif(substr($key, -7) === '__notes') {
 		$notes[substr($key, 0, -7)] = $value;
 		unset($default_attributes[$key]);
 	}
 }
 
-$form = $this->modules->get('InputfieldForm');
-$form->attr('id+name', 'hanna-form');
-$form->attr('data-name', $tag_name);
-
-// add form elements
+// Add fields to form if they weren't already added in hook
 foreach($default_attributes as $key => $value) {
-    if(isset($options[$key])) {
-	    $if = 'InputfieldSelect';
-	    if(isset($types[$key])) {
-		    switch ( strtolower($types[$key]) ) {
-			    case 'radios':
-				    $if = 'InputfieldRadios';
-				    break;
-			    case 'selectmultiple':
-				    $if = 'InputfieldSelectMultiple';
-				    break;
-			    case 'asmselect':
-				    $if = 'InputfieldAsmSelect';
-				    break;
-			    case 'checkboxes':
-				    $if = 'InputfieldCheckboxes';
-				    break;
-		    }
-	    }
-	    $f = $this->modules->get($if);
-	    $select_options_string = $options[$key];
-	    $data = $this->modules->getModuleConfigData('TextformatterHannaCode');
-	    $open_tag = isset($data['openTag']) ? $data['openTag'] : TextformatterHannaCode::DEFAULT_OPEN_TAG;
-	    if(strpos($select_options_string, $open_tag) !== false) {
-		    $this->modules->TextformatterHannaCode->formatValue($edited_page, new Field(), $select_options_string);
-	    }
-	    $select_options = $this->modules->HannaCodeDialog->prepareOptions($select_options_string, $key, $tag_name, $edited_page);
-	    if(array_values($select_options) === $select_options) {
-	    	// regular array
-		    foreach($select_options as $select_option) {
-			    $f->addOption($select_option);
-		    }
-	    } else {
-	    	// associative array
-		    $f->addOptions($select_options);
-	    }
-
-
-	    $f->value = isset($current_attributes[$key]) ? $current_attributes[$key] : $value;
-    } elseif( isset($types[$key]) && strtolower($types[$key]) === 'checkbox' ) {
-	    $f = $this->modules->get('InputfieldCheckbox');
-	    $checked = isset($current_attributes[$key]) ? (int) $current_attributes[$key] : (int) $value;
-	    $f->attr('checked', $checked === 1 ? 'checked' : '');
-    } elseif( isset($types[$key]) && strtolower($types[$key]) === 'textarea' ) {
-	    $f = $this->modules->get('InputfieldTextarea');
-	    $f->value = isset($current_attributes[$key]) ? $current_attributes[$key] : $value;
-    } else {
-	    $f = $this->modules->get('InputfieldText');
-	    $f->value = isset($current_attributes[$key]) ? $current_attributes[$key] : $value;
-    }
-	$f->attr('id+name', $key);
-	if(isset($descriptions[$key])) $f->description = $descriptions[$key];
-	if(isset($notes[$key])) $f->notes = $notes[$key];
-	$f->label = ucfirst(str_replace('_', ' ', $key));
-
-	$form->append($f);
+	// Get the field if it already exists in the form
+	$f = $form->getChildByName($key);
+	// Otherwise create field from default attributes
+	if(!$f) {
+		// Determine field type
+		if(isset($options[$key])) {
+			// Options-type field
+			$type = 'InputfieldSelect';
+			if(isset($types[$key])) {
+				switch($types[$key]) {
+					case 'radios':
+						$type = 'InputfieldRadios';
+						break;
+					case 'selectmultiple':
+						$type = 'InputfieldSelectMultiple';
+						break;
+					case 'asmselect':
+						$type = 'InputfieldAsmSelect';
+						break;
+					case 'checkboxes':
+						$type = 'InputfieldCheckboxes';
+						break;
+				}
+			}
+			$f = $this->modules->get($type);
+			// Add options
+			$select_options_string = $options[$key];
+			$data = $this->modules->getModuleConfigData('TextformatterHannaCode');
+			$open_tag = isset($data['openTag']) ? $data['openTag'] : TextformatterHannaCode::DEFAULT_OPEN_TAG;
+			if(strpos($select_options_string, $open_tag) !== false) {
+				$this->modules->TextformatterHannaCode->formatValue($edited_page, new Field(), $select_options_string);
+			}
+			$select_options = $this->modules->HannaCodeDialog->prepareOptions($select_options_string, $key, $tag_name, $edited_page);
+			if(array_values($select_options) === $select_options) {
+				// Regular array
+				foreach($select_options as $select_option) {
+					$f->addOption($select_option);
+				}
+			} else {
+				// Associative array
+				$f->addOptions($select_options);
+			}
+		} else {
+			// Non-options-type field
+			$type = 'InputfieldText';
+			if(isset($types[$key])) {
+				switch($types[$key]) {
+					case 'textarea':
+						$type = 'InputfieldTextarea';
+						break;
+					case 'checkbox':
+						$type = 'InputfieldCheckbox';
+						break;
+				}
+			}
+			$f = $this->modules->get($type);
+		}
+		// Set other field attributes
+		$f->attr('id+name', $key);
+		if(isset($descriptions[$key])) $f->description = $descriptions[$key];
+		if(isset($notes[$key])) $f->notes = $notes[$key];
+		$f->label = ucfirst(str_replace('_', ' ', $key));
+		// Add field to form
+		$form->append($f);
+	}
+	// Set value if not already set in hook
+	if(!$f->value) {
+		if($f->type === 'InputfieldCheckbox') {
+			$checked = isset($current_attributes[$key]) ? (int) $current_attributes[$key] : (int) $value;
+			$f->attr('checked', $checked === 1 ? 'checked' : '');
+		} else {
+			$f->value = isset($current_attributes[$key]) ? $current_attributes[$key] : $value;
+		}
+	}
 }
+
 ?>
 
 <style>
 	#notices, #NotificationMenu, #NotificationGhosts { display:none !important; } /* Don't show notices/notifications */
-	#tracy-debug { display:none !important; } /* Tracy doesn't fit well in the dialog */
+	/*#tracy-debug { display:none !important; }*/ /* Tracy doesn't fit well in the dialog */
 	body.modal { margin-top:5px; }
 	body.modal #content { padding:0 5px; }
 	body.modal .pw-container { padding:0; }

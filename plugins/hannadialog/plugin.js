@@ -1,4 +1,4 @@
-// escape string for regex
+// Escape string for regex
 function escapeRegExp(str) {
 	return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
 }
@@ -35,7 +35,7 @@ CKEDITOR.plugins.add( 'hannadialog', {
 			},
 
 			edit: function() {
-				// set tag variable to name of tag being edited
+				// Set tag variable to name of tag being edited
 				tag = this.data.name.trim();
 			}
 		} );

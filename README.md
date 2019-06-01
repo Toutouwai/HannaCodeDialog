@@ -76,17 +76,6 @@ And the code for the `_images_on_page` tag:
     }
     echo implode('|', $image_names);
 
-### Advanced: define or manipulate options in a hook
-
-You can hook `HannaCodeDialog::prepareOptions` to define or manipulate options for a Hanna tag attribute. Your Hanna tag must include a `someattribute__options` attribute in order for the hook to fire. The `prepareOptions` method receives the following arguments that can be used in your hook:
-
-* `options_string` Any existing string of options you have set for the attribute
-* `attribute_name` The name of the attribute the options are for
-* `tag_name` The name of the Hanna tag
-* `page` The page being edited
-
-If you hook after `HannaCodeDialog::prepareOptions` then your hook should set `$event->return` to an array of option values, or an associative array in the form of `$value => $label`.
-
 ### Choice of inputfield for attribute
 
 You can choose the inputfield that is used for an attribute in the dialog.
@@ -117,6 +106,101 @@ Example for an existing attribute named "vegetables":
 ## Notes
 
 When creating or editing a Hanna tag you can view a basic cheatsheet outlining the HannaCodeDialog features relating to attributes below the "Attributes" config inputfield.
+
+## Advanced
+
+### Define or manipulate options in a hook
+
+You can hook `HannaCodeDialog::prepareOptions` to define or manipulate options for a Hanna tag attribute. Your Hanna tag must include a `someattribute__options` attribute in order for the hook to fire. The `prepareOptions` method receives the following arguments that can be used in your hook:
+
+* `options_string` Any existing string of options you have set for the attribute
+* `attribute_name` The name of the attribute the options are for
+* `tag_name` The name of the Hanna tag
+* `page` The page being edited
+
+If you hook after `HannaCodeDialog::prepareOptions` then your hook should set `$event->return` to an array of option values, or an associative array in the form of `$value => $label`.
+
+### Build entire dialog form in a hook
+
+You can hook after `HannaCodeDialog::buildForm` to add inputfields to the dialog form. You can define options for the inputfields when you add them. Using a hook like this can be useful if you prefer to configure inputfield type/options/descriptions/notes in your IDE rather than as extra attributes in the Hanna tag settings. It's also useful if you want to use inputfield settings such as `showIf`.
+
+**When you add the inputfields you must set both the `name` and the `id` of the inputfield to match the attribute name.**
+
+You only need to set an inputfield value in the hook if you want to force the value - otherwise the current values from the tag are automatically applied.
+
+To use this hook you only have to define the essential attributes (the "fields" for the tag) in the Hanna Code settings and then all the other inputfield settings can be set in the hook.
+
+#### Example buildForm() hook
+
+The Hanna Code attributes defined for tag "meal" (a default value is defined for "vegetables"):
+
+```
+vegetables=Carrot
+meat
+cooking_style
+comments
+```
+
+The hook code in /site/ready.php:
+
+```php
+$wire->addHookAfter('HannaCodeDialog::buildForm', function(HookEvent $event) {
+
+	// The Hanna tag that is being opened in the dialog
+	$tag_name = $event->arguments(0);
+
+	// Other arguments if you need them
+	/* @var Page $edited_page */
+	$edited_page = $event->arguments(1); // The page open in Page Edit
+	$current_attributes = $event->arguments(2); // The current attribute values
+	$default_attributes = $event->arguments(3); // The default attribute values
+
+	// The form rendered in the dialog
+	/* @var InputfieldForm $form */
+	$form = $event->return;
+
+	if($tag_name === 'meal') {
+
+		$modules = $event->wire('modules');
+
+		/* @var InputfieldCheckboxes $f */
+		$f = $modules->InputfieldCheckboxes;
+		$f->name = 'vegetables'; // Set name to match attribute
+		$f->id = 'vegetables'; // Set id to match attribute
+		$f->label = 'Vegetables';
+		$f->description = 'Please select some vegetables.';
+		$f->notes = "If you don't eat your vegetables you can't have any pudding.";
+		$f->addOptions(['Carrot', 'Cabbage', 'Celery'], false);
+		$form->add($f);
+
+		/* @var InputfieldRadios $f */
+		$f = $modules->InputfieldRadios;
+		$f->name = 'meat';
+		$f->id = 'meat';
+		$f->label = 'Meat';
+		$f->addOptions(['Pork', 'Beef', 'Chicken', 'Lamb'], false);
+		$form->add($f);
+
+		/* @var InputfieldSelect $f */
+		$f = $modules->InputfieldSelect;
+		$f->name = 'cooking_style';
+		$f->id = 'cooking_style';
+		$f->label = 'How would you like it cooked?';
+		$f->addOptions(['Fried', 'Boiled', 'Baked'], false);
+		$form->add($f);
+
+		/* @var InputfieldText $f */
+		$f = $modules->InputfieldText;
+		$f->name = 'comments';
+		$f->id = 'comments';
+		$f->label = 'Comments for the chef';
+		$f->showIf = 'cooking_style=Fried';
+		$form->add($f);
+
+	}
+
+});
+````
 
 ## Troubleshooting
 
