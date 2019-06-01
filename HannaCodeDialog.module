@@ -118,7 +118,7 @@ EOT;
 		$edited_page = $event->object->getPage();
 
 		// Render Hanna tag form if tag variable in $input
-		$tag = $this->wire('input')->get->text('tag');
+		$tag = $this->wire('input')->get->textarea('tag');
 		if($tag) {
 			$event->replace = true; // Don't render normal page edit form
 			$current_attributes = $this->getAttributes($tag);
