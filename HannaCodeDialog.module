@@ -25,7 +25,7 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 	public static function getModuleInfo() {
 		return array(
 			'title' => 'Hanna Code Dialog',
-			'version' => '0.2.2',
+			'version' => '0.2.3',
 			'summary' => 'Enhances the use of Hanna tags in CKEditor fields, including the dialog-based editing of Hanna tags.',
 			'author' => 'Robin Sallis',
 			'icon' => 'clone',
@@ -155,8 +155,8 @@ EOT;
 		$settings = array();
 		$data = $this->wire('modules')->getModuleConfigData('TextformatterHannaCode');
 		$settings['iframe_path'] = "{$this->wire('page')->url}?id={$edited_page->id}&modal=1";
-		$settings['open_tag'] = isset($data['openTag']) ? $data['openTag'] : TextformatterHannaCode::DEFAULT_OPEN_TAG;
-		$settings['close_tag'] = isset($data['closeTag']) ? $data['closeTag'] : TextformatterHannaCode::DEFAULT_CLOSE_TAG;
+		$settings['open_tag'] = isset($data['openTag']) ? $data['openTag'] : \TextformatterHannaCode::DEFAULT_OPEN_TAG;
+		$settings['close_tag'] = isset($data['closeTag']) ? $data['closeTag'] : \TextformatterHannaCode::DEFAULT_CLOSE_TAG;
 		$settings['hanna_tags'] = $this->getDropdownTags($edited_page);
 		$settings['tags_no_attributes'] = $this->tags_no_attributes;
 		$settings['widget_colour'] = $this->widget_colour ?: '#d3eaf2';
