@@ -67,7 +67,7 @@ foreach($default_attributes as $key => $value) {
 			// Add options
 			$select_options_string = $options[$key];
 			$data = $this->modules->getModuleConfigData('TextformatterHannaCode');
-			$open_tag = isset($data['openTag']) ? $data['openTag'] : TextformatterHannaCode::DEFAULT_OPEN_TAG;
+			$open_tag = !empty($data['openTag']) ? $data['openTag'] : \TextformatterHannaCode::DEFAULT_OPEN_TAG;
 			if(strpos($select_options_string, $open_tag) !== false) {
 				$this->modules->TextformatterHannaCode->formatValue($edited_page, new Field(), $select_options_string);
 			}
