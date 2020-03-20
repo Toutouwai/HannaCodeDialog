@@ -86,6 +86,8 @@ Inputfields that support the selection of a single option are `select` (this is 
 
 Inputfields that support the selection of multiple options are `selectmultiple`, `asmselect` and  `checkboxes`.
 
+For selecting pages you can use `pagelistselect` or `pagelistselectmultiple`. You don't supply select options for these inputfield types.
+
 You can also specify a `checkbox` inputfield - this is not for attributes with defined options but will limit an attribute to an integer value of 1 or 0.
 
 The names of the inputfield types are case-insensitive.
@@ -129,6 +131,10 @@ You can hook after `HannaCodeDialog::buildForm` to add inputfields to the dialog
 You only need to set an inputfield value in the hook if you want to force the value - otherwise the current values from the tag are automatically applied.
 
 To use this hook you only have to define the essential attributes (the "fields" for the tag) in the Hanna Code settings and then all the other inputfield settings can be set in the hook.
+
+#### PageAutocomplete inputfield type
+
+The `PageAutocomplete` inputfield type can only be used via a `HannaCodeDialog::buildForm` hook. See the [PhpDoc documentation](https://github.com/processwire/processwire/blob/51629cdd5f381d3881133baf83e1bd2d9306f867/wire/modules/Inputfield/InputfieldPageAutocomplete/InputfieldPageAutocomplete.module#L11-L24) for the list of inputfield properties that may be set. Particularly `findPagesSelector` for limiting the pages that may be selected and `maxSelectedItems` for allowing only a single page selection.
 
 #### Example buildForm() hook
 

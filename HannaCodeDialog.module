@@ -25,7 +25,7 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 	public static function getModuleInfo() {
 		return array(
 			'title' => 'Hanna Code Dialog',
-			'version' => '0.2.5',
+			'version' => '0.3.0',
 			'summary' => 'Enhances the use of Hanna tags in CKEditor fields, including the dialog-based editing of Hanna tags.',
 			'author' => 'Robin Sallis',
 			'icon' => 'clone',
@@ -79,7 +79,7 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 	<h3>Inputfield type</h3>
 	<p class='mono mono-block'>vegetables__type=asmselect</p>
 	<p>The default type for text attributes is <span class='mono'>text</span>. The default type for attributes with options specified is <span class='mono'>select</span>.</p>
-	<p>Inputfield types are case insensitive. Supported types are <span class='mono'>text</span> <span class='mono'>textarea</span> <span class='mono'>select</span> <span class='mono'>radios</span> <span class='mono'>selectmultiple</span> <span class='mono'>asmselect</span> <span class='mono'>checkboxes</span> <span class='mono'>checkbox</span></p>
+	<p>Inputfield types are case insensitive. Supported types are <span class='mono'>text</span> <span class='mono'>textarea</span> <span class='mono'>select</span> <span class='mono'>radios</span> <span class='mono'>selectmultiple</span> <span class='mono'>asmselect</span> <span class='mono'>checkboxes</span> <span class='mono'>checkbox</span> <span class='mono'>pagelistselect</span> <span class='mono'>pagelistselectmultiple</span></p>
 	<p>The <span class='mono'>checkbox</span> type allows for an integer value of 1 or 0.</p>
 	
 	<h3>Options: static</h3>

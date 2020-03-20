@@ -92,6 +92,12 @@ foreach($default_attributes as $key => $value) {
 					case 'checkbox':
 						$type = 'InputfieldCheckbox';
 						break;
+					case 'pagelistselect':
+						$type = 'InputfieldPageListSelect';
+						break;
+					case 'pagelistselectmultiple':
+						$type = 'InputfieldPageListSelectMultiple';
+						break;
 				}
 			}
 			$f = $this->modules->get($type);
@@ -106,11 +112,17 @@ foreach($default_attributes as $key => $value) {
 	}
 	// Set value if not already set in hook
 	if(!$f->value) {
-		if($f->type === 'InputfieldCheckbox') {
-			$checked = isset($current_attributes[$key]) ? (int) $current_attributes[$key] : (int) $value;
-			$f->attr('checked', $checked === 1 ? 'checked' : '');
-		} else {
-			$f->value = isset($current_attributes[$key]) ? $current_attributes[$key] : $value;
+		switch($f->className) {
+			case 'InputfieldCheckbox':
+				$checked = isset($current_attributes[$key]) ? (int) $current_attributes[$key] : (int) $value;
+				$f->attr('checked', $checked === 1 ? 'checked' : '');
+				break;
+			case 'InputfieldPageListSelectMultiple':
+			case 'InputfieldPageAutocomplete':
+				$f->value = isset($current_attributes[$key]) ? explode(',', $current_attributes[$key]) : explode(',', $value);
+				break;
+			default:
+				$f->value = isset($current_attributes[$key]) ? $current_attributes[$key] : $value;
 		}
 	}
 }

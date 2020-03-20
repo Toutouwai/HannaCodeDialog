@@ -27,15 +27,15 @@ CKEDITOR.dialog.add( 'hannadialog', function( editor ) {
 			iframe.setAttribute('src', iframeSrc(tag));
 		},
 		onCancel: function() {
-			// clear src to avoid flash of old iframe src on next load
+			// Clear src to avoid flash of old iframe src on next load
 			var iframe = this.getElement().getDocument().getById('hanna_iframe_' + editor.id);
 			iframe.setAttribute('src', '');
 		},
 		onOk: function() {
-			// clear src to avoid flash of old iframe src on next load
+			// Clear src to avoid flash of old iframe src on next load
 			var iframe = this.getElement().getDocument().getById('hanna_iframe_' + editor.id);
 			iframe.setAttribute('src', '');
-			// write tag back to editor
+			// Write tag back to editor
 			var tag_name = $dialog_iframe.contents().find('#hanna-form').data('name');
 			var $inputfields = $dialog_iframe.contents().find('#hanna-form li.Inputfield');
 			var out = '';
@@ -43,22 +43,33 @@ CKEDITOR.dialog.add( 'hannadialog', function( editor ) {
 				if( $(this).attr('id') === 'wrap_hanna-submit' ) return;
 				var id = $(this).attr('id').replace('wrap_', '');
 				var value = '';
-				if( $(this).hasClass('InputfieldText') ) {
-					value = $(this).find('input').val();
-				} else if( $(this).hasClass('InputfieldTextarea') ) {
+				// Textarea
+				if($(this).hasClass('InputfieldTextarea')) {
 					value = $(this).find('textarea').val();
-					// remove line breaks because they break CKEditor widget
+					// Remove line breaks because they break CKEditor widget
 					value = value.replace(/(\r\n|\n|\r)/gm, '');
-				} else if( $(this).hasClass('InputfieldSelect') ) {
+				}
+				// Select
+				else if($(this).hasClass('InputfieldSelect')) {
 					value = $(this).find('select').val();
 				}
-				else if( $(this).hasClass('InputfieldAsmSelect') || $(this).hasClass('InputfieldSelectMultiple') ) {
-					value = $(this).find('#' + id).val().join('|');
-				} else if( $(this).hasClass('InputfieldCheckboxes') || $(this).hasClass('InputfieldRadios') ) {
+				// AsmSelect and SelectMultiple
+				else if($(this).hasClass('InputfieldAsmSelect') || $(this).hasClass('InputfieldSelectMultiple')) {
+					var the_value = $(this).find('#' + id).val();
+					if(the_value) value = the_value.join('|');
+				}
+				// Checkboxes and Radios
+				else if($(this).hasClass('InputfieldCheckboxes') || $(this).hasClass('InputfieldRadios')) {
 					var checked = $.map($(this).find('input:checked'), function(v) { return $(v).val(); });
 					value = checked.join('|');
-				} else if( $(this).hasClass('InputfieldCheckbox') ) {
+				}
+				// Checkbox
+				else if($(this).hasClass('InputfieldCheckbox')) {
 					value = $(this).find('#' + id).is(':checked') ? 1 : '';
+				}
+				// InputfieldText and everything else
+				else {
+					value = $(this).find('input').val();
 				}
 				out += ' ' + id + '="' + value + '"';
 			});
