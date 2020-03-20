@@ -134,7 +134,7 @@ To use this hook you only have to define the essential attributes (the "fields" 
 
 #### PageAutocomplete inputfield type
 
-The `PageAutocomplete` inputfield type can only be used via a `HannaCodeDialog::buildForm` hook. See the [PhpDoc documentation](https://github.com/processwire/processwire/blob/51629cdd5f381d3881133baf83e1bd2d9306f867/wire/modules/Inputfield/InputfieldPageAutocomplete/InputfieldPageAutocomplete.module#L11-L24) for the list of inputfield properties that may be set. Particularly `findPagesSelector` for limiting the pages that may be selected and `maxSelectedItems` for allowing only a single page selection.
+The `PageAutocomplete` inputfield type can only be used via a `HannaCodeDialog::buildForm` hook. See the [PHPDoc documentation](https://github.com/processwire/processwire/blob/51629cdd5f381d3881133baf83e1bd2d9306f867/wire/modules/Inputfield/InputfieldPageAutocomplete/InputfieldPageAutocomplete.module#L11-L24) for the list of inputfield properties that may be set. Particularly `findPagesSelector` for limiting the pages that may be selected and `maxSelectedItems` for allowing only a single page selection.
 
 #### Example buildForm() hook
 
