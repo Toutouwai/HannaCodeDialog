@@ -160,6 +160,7 @@ $wire->addHookAfter('HannaCodeDialog::buildForm', function(HookEvent $event) {
     $edited_page = $event->arguments(1); // The page open in Page Edit
     $current_attributes = $event->arguments(2); // The current attribute values
     $default_attributes = $event->arguments(3); // The default attribute values
+    $inputfield_name = $event->arguments(4); // The name of the CKEditor inputfield - may end in a repeater suffix
 
     // The form rendered in the dialog
     /* @var InputfieldForm $form */

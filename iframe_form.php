@@ -3,6 +3,7 @@
 /* @var array $current_attributes */
 /* @var array $hanna_tags */
 /* @var Page $edited_page */
+/* @var string $inputfield_name */
 /* @var Modules $modules */
 
 // Current attribute values
@@ -10,16 +11,16 @@ $tag_name = $current_attributes['name'];
 unset($current_attributes['name']);
 
 // Default attributes for tag
-$default_attributes = isset($hanna_tags[$tag_name]) ? $hanna_tags[$tag_name] : array();
+$default_attributes = isset($hanna_tags[$tag_name]) ? $hanna_tags[$tag_name] : [];
 
 // Get form from hookable method
-$form = $modules->HannaCodeDialog->buildForm($tag_name, $edited_page, $current_attributes, $default_attributes);
+$form = $modules->HannaCodeDialog->buildForm($tag_name, $edited_page, $current_attributes, $default_attributes, $inputfield_name);
 
 // Work out inputfield attributes from default attributes
-$options = array();
-$types = array();
-$descriptions = array();
-$notes = array();
+$options = [];
+$types = [];
+$descriptions = [];
+$notes = [];
 foreach($default_attributes as $key => $value) {
 	if(strpos($key, '__') === false) continue;
 	if(substr($key, -9) === '__options') {
