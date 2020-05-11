@@ -25,7 +25,7 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 	public static function getModuleInfo() {
 		return array(
 			'title' => 'Hanna Code Dialog',
-			'version' => '0.3.1',
+			'version' => '0.3.2',
 			'summary' => 'Enhances the use of Hanna tags in CKEditor fields, including the dialog-based editing of Hanna tags.',
 			'author' => 'Robin Sallis',
 			'icon' => 'clone',
@@ -44,9 +44,34 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 	 * Ready
 	 */
 	public function ready() {
+		$this->addHookAfter('InputfieldCKEditor::renderReadyHook', $this, 'afterCkeRenderReady');
 		$this->addHookAfter('ProcessPageEdit::execute', $this, 'beforePageEdit');
 		$this->addHookAfter('ProcessPageEdit::execute', $this, 'afterPageEdit');
 		$this->addHookBefore('InputfieldForm::render', $this, 'addCheatSheet');
+	}
+
+	/**
+	 * After InputfieldCKEditor::renderReadyHook
+	 * Add extra CKEditor plugins
+	 *
+	 * @param HookEvent $event
+	 */
+	protected function afterCkeRenderReady(HookEvent $event) {
+		$inputfield = $event->object;
+		$field = $inputfield->hasField;
+		if(!$field) return;
+		$textformatters = $field->textformatters;
+		if(!is_array($textformatters) || !in_array('TextformatterHannaCode', $textformatters)) return;
+		$config_name = "InputfieldCKEditor_{$field->name}";
+		$config_name_matrix = "InputfieldCKEditor_{$field->name}_matrix";
+		$config = $this->wire('config');
+		$js_config = $config->js();
+		foreach($js_config as $key => $value) {
+			if($key === $config_name || strpos($key, $config_name_matrix) === 0) {
+				$js_config[$key]['extraPlugins'] .= ',hannadropdown,hannadialog';
+				$config->js($key, $js_config[$key]);
+			}
+		}
 	}
 
 	/**
@@ -92,22 +117,10 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 		// Return if ProcessPageEdit is being loaded via AJAX (image field)
 		if($config->ajax) return;
 
-		// Add JS
-		$js = '';
-		$js_config = $config->js();
-		foreach($js_config as $key => $value) {
-			// Check for extraPlugins key to identify CKEditor within Profields Table
-			if(strpos($key, 'InputfieldCKEditor_') !== false || isset($value['extraPlugins'])) {
-				$js .= "config.$key.extraPlugins += ',hannadropdown,hannadialog';";
-			}
-		}
-		// Return if no CKEditor fields with TextformatterHannaCode found
-		if(!$js) return;
-
 		$edited_page = $event->object->getPage();
 
 		// Add CKEditor plugins and init JS variables
-		$js .= '';
+		$js = '';
 		$plugins_path = $config->urls->{$this} . 'plugins';
 		$js = "
 		var hcd_config = config.HannaCodeDialog;
@@ -229,9 +242,7 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 	 *
 	 */
 	protected function getAttributes($expression) {
-
 		$attrs = [];
-
 		$regx =
 			'!(?:^|\b)' .		    // beginning or boundary
 			'([-_a-z0-9]+)' .	    // 1. attribute name
@@ -244,15 +255,12 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 			'[^\'",\s]*' .		    // unquoted value...
 			'),?' . 			    // optional comma, per PW selector style
 			'!i';
-
 		if(!preg_match_all($regx, $expression, $matches)) {
 			return $attrs;
 		}
-
 		foreach($matches[1] as $key => $name) {
 			$attrs[$name] = trim($matches[2][$key], "'\"");
 		}
-
 		if(empty($attrs['name'])) {
 			// allow for optional [[name_here attrs]] expression
 			// where the 'name' isn't specifically called out as an attribute
@@ -261,7 +269,6 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 				$attrs['name'] = $matches[1];
 			}
 		}
-
 		return $attrs;
 	}
 
