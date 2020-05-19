@@ -99,6 +99,9 @@ foreach($default_attributes as $key => $value) {
 					case 'pagelistselectmultiple':
 						$type = 'InputfieldPageListSelectMultiple';
 						break;
+					case 'integer':
+						$type = 'InputfieldInteger';
+						break;
 				}
 			}
 			$f = $this->modules->get($type);
@@ -108,6 +111,7 @@ foreach($default_attributes as $key => $value) {
 		if(isset($descriptions[$key])) $f->description = $descriptions[$key];
 		if(isset($notes[$key])) $f->notes = $notes[$key];
 		$f->label = ucfirst(str_replace('_', ' ', $key));
+		if($type === 'InputfieldInteger') $f->inputType = 'number';
 		// Add field to form
 		$form->append($f);
 	}

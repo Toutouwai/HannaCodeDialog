@@ -82,6 +82,8 @@ You can choose the inputfield that is used for an attribute in the dialog.
 
 For text attributes the supported inputfields are `text` (this is the default inputfield for text attributes so it isn't necessary to specify it if you want it) and `textarea`. Note: any manual line breaks inside a textarea are removed because these will break the CKEditor tag widget.
 
+An `integer` inputfield will result in a number input type.
+
 Inputfields that support the selection of a single option are `select` (this is the default inputfield for attributes with options so it isn't necessary to specify it if you want it) and `radios`.
 
 Inputfields that support the selection of multiple options are `selectmultiple`, `asmselect` and  `checkboxes`.
