@@ -25,7 +25,7 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 	public static function getModuleInfo() {
 		return array(
 			'title' => 'Hanna Code Dialog',
-			'version' => '0.3.3',
+			'version' => '0.3.4',
 			'summary' => 'Enhances the use of Hanna tags in CKEditor fields, including the dialog-based editing of Hanna tags.',
 			'author' => 'Robin Sallis',
 			'icon' => 'clone',
@@ -116,6 +116,17 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 
 		// Return if ProcessPageEdit is being loaded via AJAX (image field)
 		if($config->ajax) return;
+
+		// Return if no CKEditor fields on this page
+		$has_cke = false;
+		foreach($config->js() as $key => $value) {
+			// Check for extraPlugins key to identify CKEditor within Profields Table
+			if(strpos($key, 'InputfieldCKEditor_') !== false || isset($value['extraPlugins'])) {
+				$has_cke = true;
+				break;
+			}
+		}
+		if(!$has_cke) return;
 
 		$edited_page = $event->object->getPage();
 
