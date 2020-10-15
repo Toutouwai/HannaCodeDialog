@@ -1,22 +1,5 @@
 <?php namespace ProcessWire;
 
-/**
- *
- * Hanna Code Dialog
- *
- * @author Robin Sallis
- *
- * @credits Teppo Koivula: this module utilises code from HannaCodeHelper
- *
- * ProcessWire 3.x
- * Copyright (C) 2011 by Ryan Cramer
- * Licensed under GNU/GPL v2, see LICENSE.TXT
- *
- * http://www.processwire.com
- * http://www.ryancramer.com
- *
- */
-
 class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 
 	/**
@@ -25,7 +8,7 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 	public static function getModuleInfo() {
 		return array(
 			'title' => 'Hanna Code Dialog',
-			'version' => '0.3.4',
+			'version' => '0.3.5',
 			'summary' => 'Enhances the use of Hanna tags in CKEditor fields, including the dialog-based editing of Hanna tags.',
 			'author' => 'Robin Sallis',
 			'icon' => 'clone',
@@ -82,6 +65,7 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 	protected function beforePageEdit(HookEvent $event) {
 		$config = $this->wire('config');
 		$input = $this->wire('input');
+		$admin_theme = $this->wire('adminTheme');
 
 		// Return if ProcessPageEdit is being loaded via AJAX (image field)
 		if($config->ajax) return;
@@ -91,7 +75,10 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 		// Render Hanna tag form if tag variable in $input
 		$tag = $input->get->textarea('tag');
 		if($tag) {
-			$event->replace = true; // Don't render normal page edit form
+			// Don't render normal page edit form
+			$event->replace = true;
+			// Add class to body tag
+			$admin_theme->addBodyClass('HannaCodeDialog');
 			$inputfield_name = $input->get->fieldName('field_name');
 			$current_attributes = $this->getAttributes($tag);
 			if(!isset($current_attributes['name'])) $current_attributes['name'] = trim($tag);

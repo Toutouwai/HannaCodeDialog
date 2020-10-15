@@ -136,7 +136,7 @@ foreach($default_attributes as $key => $value) {
 
 <style>
 	#notices, #NotificationMenu, #NotificationGhosts { display:none !important; } /* Don't show notices/notifications */
-	/*#tracy-debug { display:none !important; }*/ /* Tracy doesn't fit well in the dialog */
+	#tracy-debug { display:none !important; } /* Tracy doesn't fit well in the dialog */
 	body.modal { margin-top:5px; }
 	body.modal #content { padding:0 5px; }
 	body.modal .pw-container { padding:0; }
