@@ -8,7 +8,7 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 	public static function getModuleInfo() {
 		return array(
 			'title' => 'Hanna Code Dialog',
-			'version' => '0.3.5',
+			'version' => '0.3.6',
 			'summary' => 'Enhances the use of Hanna tags in CKEditor fields, including the dialog-based editing of Hanna tags.',
 			'author' => 'Robin Sallis',
 			'icon' => 'clone',
@@ -27,81 +27,27 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 	 * Ready
 	 */
 	public function ready() {
+		$this->addHookAfter('ProcessPageEdit::execute', $this, 'afterEditProcess');
+		$this->addHookAfter('ProcessProfile::execute', $this, 'afterEditProcess');
+
+		$this->addHookBefore('ProcessPageEdit::execute', $this, 'renderForm');
+		$this->addHookBefore('ProcessProfile::execute', $this, 'renderForm');
+		$this->addHookBefore('ProcessUser::execute', $this, 'renderForm');
+
 		$this->addHookAfter('InputfieldCKEditor::renderReadyHook', $this, 'afterCkeRenderReady');
-		$this->addHookAfter('ProcessPageEdit::execute', $this, 'beforePageEdit');
-		$this->addHookAfter('ProcessPageEdit::execute', $this, 'afterPageEdit');
 		$this->addHookBefore('InputfieldForm::render', $this, 'addCheatSheet');
 	}
 
 	/**
-	 * After InputfieldCKEditor::renderReadyHook
-	 * Add extra CKEditor plugins
+	 * After edit Process executes
+	 * ProcessPageEdit, ProcessUser, ProcessProfile
 	 *
 	 * @param HookEvent $event
 	 */
-	protected function afterCkeRenderReady(HookEvent $event) {
-		$inputfield = $event->object;
-		$field = $inputfield->hasField;
-		if(!$field) return;
-		$textformatters = $field->textformatters;
-		if(!is_array($textformatters) || !in_array('TextformatterHannaCode', $textformatters)) return;
-		$config_name = "InputfieldCKEditor_{$field->name}";
-		$config_name_matrix = "InputfieldCKEditor_{$field->name}_matrix";
-		$config = $this->wire('config');
-		$js_config = $config->js();
-		foreach($js_config as $key => $value) {
-			if($key === $config_name || strpos($key, $config_name_matrix) === 0) {
-				$js_config[$key]['extraPlugins'] .= ',hannadropdown,hannadialog';
-				$config->js($key, $js_config[$key]);
-			}
-		}
-	}
+	protected function afterEditProcess(HookEvent $event) {
+		$config = $this->wire()->config;
 
-	/**
-	 * Before ProcessPageEdit::execute
-	 *
-	 * @param HookEvent $event
-	 */
-	protected function beforePageEdit(HookEvent $event) {
-		$config = $this->wire('config');
-		$input = $this->wire('input');
-		$admin_theme = $this->wire('adminTheme');
-
-		// Return if ProcessPageEdit is being loaded via AJAX (image field)
-		if($config->ajax) return;
-
-		$edited_page = $event->object->getPage();
-
-		// Render Hanna tag form if tag variable in $input
-		$tag = $input->get->textarea('tag');
-		if($tag) {
-			// Don't render normal page edit form
-			$event->replace = true;
-			// Add class to body tag
-			$admin_theme->addBodyClass('HannaCodeDialog');
-			$inputfield_name = $input->get->fieldName('field_name');
-			$current_attributes = $this->getAttributes($tag);
-			if(!isset($current_attributes['name'])) $current_attributes['name'] = trim($tag);
-			$vars = [
-				'current_attributes' => $current_attributes,
-				'hanna_tags' => $this->getHannaTags(),
-				'edited_page' => $edited_page,
-				'inputfield_name' => $inputfield_name,
-			];
-			$options = ['defaultPath' => $config->paths->{$this}];
-			$event->return = $this->wire('files')->render('iframe_form', $vars, $options);
-		}
-	}
-
-	/**
-	 * After ProcessPageEdit::execute
-	 *
-	 * @param HookEvent $event
-	 */
-	protected function afterPageEdit(HookEvent $event) {
-		$config = $this->wire('config');
-
-		// Return if ProcessPageEdit is being loaded via AJAX (image field)
+		// Return if loaded via AJAX (image field)
 		if($config->ajax) return;
 
 		// Return if no CKEditor fields on this page
@@ -115,7 +61,12 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 		}
 		if(!$has_cke) return;
 
-		$edited_page = $event->object->getPage();
+		// Get edited page
+		if($event->wire()->process instanceof ProcessProfile) {
+			$edited_page = $event->wire()->user;
+		} else {
+			$edited_page = $event->object->getPage();
+		}
 
 		// Add CKEditor plugins and init JS variables
 		$js = '';
@@ -130,8 +81,8 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 
 		// To config JS
 		$settings = [];
-		$data = $this->wire('modules')->getModuleConfigData('TextformatterHannaCode');
-		$settings['iframe_path'] = "{$this->wire('page')->url}?id={$edited_page->id}&modal=1";
+		$data = $this->wire()->modules->getModuleConfigData('TextformatterHannaCode');
+		$settings['iframe_path'] = "{$this->wire()->input->url}?id={$edited_page->id}&modal=1";
 		$settings['open_tag'] = !empty($data['openTag']) ? $data['openTag'] : \TextformatterHannaCode::DEFAULT_OPEN_TAG;
 		$settings['close_tag'] = !empty($data['closeTag']) ? $data['closeTag'] : \TextformatterHannaCode::DEFAULT_CLOSE_TAG;
 		$settings['hanna_tags'] = $this->getDropdownTags($edited_page);
@@ -150,6 +101,49 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 	}
 
 	/**
+	 * Render dialog form
+	 *
+	 * @param HookEvent $event
+	 */
+	protected function renderForm(HookEvent $event) {
+		$config = $this->wire()->config;
+		$input = $this->wire()->input;
+		$admin_theme = $this->wire()->adminTheme;
+
+		// Get tag
+		$tag = $input->get->textarea('tag');
+		if(!$tag) return;
+
+		// Get edited page
+		if($event->wire()->process instanceof ProcessProfile) {
+			$edited_page = $event->wire()->user;
+		} else {
+			$edited_page = $event->object->getPage();
+		}
+
+		// Replace the method
+		$event->replace = true;
+		// Add class to body tag
+		$admin_theme->addBodyClass('HannaCodeDialog');
+		// Make sure the page is actually editable by the current user
+		if($edited_page->id && $edited_page->editable) {
+			$inputfield_name = $input->get->fieldName('field_name');
+			$current_attributes = $this->getAttributes($tag);
+			if(!isset($current_attributes['name'])) $current_attributes['name'] = trim($tag);
+			$vars = [
+				'current_attributes' => $current_attributes,
+				'hanna_tags' => $this->getHannaTags(),
+				'edited_page' => $edited_page,
+				'inputfield_name' => $inputfield_name,
+			];
+			$options = ['defaultPath' => $config->paths->{$this}];
+			$event->return = $this->wire()->files->render('iframe_form', $vars, $options);
+		} else {
+			$event->return = $this->_("You don't have permission to edit this page.");
+		}
+	}
+
+	/**
 	 * Get Hanna Code tags from database
 	 *
 	 * @param bool $name_only
@@ -158,13 +152,13 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 	 */
 	public function getHannaTags($name_only = false, $filter_tags = false) {
 		// Instantiate TextformatterHannaCode
-		$hanna = $this->wire('modules')->get('TextformatterHannaCode');
+		$hanna = $this->wire()->modules->get('TextformatterHannaCode');
 		// Fetch Hanna Code tags from database
 		$tags = [];
 		$tags_no_attributes = [];
 
 		$sql = "SELECT name, code FROM hanna_code ORDER BY name";
-		$query = $this->wire('database')->prepare($sql);
+		$query = $this->wire()->database->prepare($sql);
 		$query->execute();
 		while($row = $query->fetch(\PDO::FETCH_NUM)) {
 			list($name, $code) = $row;
@@ -271,6 +265,31 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 	}
 
 	/**
+	 * After InputfieldCKEditor::renderReadyHook
+	 * Add extra CKEditor plugins
+	 *
+	 * @param HookEvent $event
+	 */
+	protected function afterCkeRenderReady(HookEvent $event) {
+		/** @var InputfieldCKEditor $inputfield */
+		$inputfield = $event->object;
+		$field = $inputfield->hasField;
+		if(!$field) return;
+		$textformatters = $field->textformatters;
+		if(!is_array($textformatters) || !in_array('TextformatterHannaCode', $textformatters)) return;
+		$config_name = "InputfieldCKEditor_{$field->name}";
+		$config_name_matrix = "InputfieldCKEditor_{$field->name}_matrix";
+		$config = $this->wire()->config;
+		$js_config = $config->js();
+		foreach($js_config as $key => $value) {
+			if($key === $config_name || strpos($key, $config_name_matrix) === 0) {
+				$js_config[$key]['extraPlugins'] .= ',hannadropdown,hannadialog';
+				$config->js($key, $js_config[$key]);
+			}
+		}
+	}
+
+	/**
 	 * Add cheatsheet info to Hanna Code edit
 	 *
 	 * @param HookEvent $event
@@ -281,7 +300,7 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 		if($form->id !== 'HannaCodeEdit') return;
 		$hc_attr = $form->getChildByName('hc_attr');
 
-		$f = $this->wire('modules')->get('InputfieldMarkup');
+		$f = $this->wire()->modules->get('InputfieldMarkup');
 		$f->name = 'hcd_info';
 		$f->label = $this->_('Attributes cheatsheet for HannaCodeDialog');
 		$f->value = <<<EOT
@@ -332,7 +351,7 @@ EOT;
 	 * @param InputfieldWrapper $inputfields
 	 */
 	public function getModuleConfigInputfields(InputfieldWrapper $inputfields) {
-		$modules = $this->wire('modules');
+		$modules = $this->wire()->modules;
 
 		/* @var InputfieldText $f */
 		$f = $modules->InputfieldText;
@@ -387,6 +406,16 @@ EOT;
 		$f->min = 0;
 		$f->value = $this->$f_name ?: 420;
 		$inputfields->add($f);
+
+		if($modules->isInstalled('TracyDebugger')) {
+			/* @var InputfieldCheckbox $f */
+			$f = $modules->get('InputfieldCheckbox');
+			$f_name = 'show_tracy';
+			$f->name = $f_name;
+			$f->label = $this->_('Show Tracy Debugger bar in dialog');
+			$f->checked = $this->$f_name === 1 ? 'checked' : '';
+			$inputfields->add($f);
+		}
 	}
 
 }

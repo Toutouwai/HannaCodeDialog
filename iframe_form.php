@@ -14,7 +14,8 @@ unset($current_attributes['name']);
 $default_attributes = isset($hanna_tags[$tag_name]) ? $hanna_tags[$tag_name] : [];
 
 // Get form from hookable method
-$form = $modules->HannaCodeDialog->buildForm($tag_name, $edited_page, $current_attributes, $default_attributes, $inputfield_name);
+$hcd = $modules->get('HannaCodeDialog');
+$form = $hcd->buildForm($tag_name, $edited_page, $current_attributes, $default_attributes, $inputfield_name);
 
 // Work out inputfield attributes from default attributes
 $options = [];
@@ -136,7 +137,6 @@ foreach($default_attributes as $key => $value) {
 
 <style>
 	#notices, #NotificationMenu, #NotificationGhosts { display:none !important; } /* Don't show notices/notifications */
-	#tracy-debug { display:none !important; } /* Tracy doesn't fit well in the dialog */
 	body.modal { margin-top:5px; }
 	body.modal #content { padding:0 5px; }
 	body.modal .pw-container { padding:0; }
@@ -144,6 +144,9 @@ foreach($default_attributes as $key => $value) {
 	.InputfieldForm { margin-bottom:0; }
 	.pw-content p.hanna-message { margin:-5px 0 0; }
 	body.AdminThemeUikit #main { padding:0 !important; margin:10px 0 20px !important; }
+	<?php if(!$hcd->show_tracy): ?>
+		#tracy-debug { display:none !important; }
+	<?php endif; ?>
 </style>
 
 <h2 id="tag-head"><?= ucfirst(str_replace('_', ' ', $tag_name)) ?></h2>
