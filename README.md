@@ -2,7 +2,7 @@
 
 A module for ProcessWire CMS/CMF. Provides a number of enhancements for working with Hanna Code tags in CKEditor. The main enhancement is that Hanna tags in a CKEditor field may be double-clicked to edit their attributes using core ProcessWire inputfields in a modal dialog.
 
-Requires the Hanna Code module and >= ProcessWire v3.0.0.
+Requires Hanna Code >= v0.3.0 and PHP >= v5.4.0.
 
 ## Installation
 
