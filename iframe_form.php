@@ -65,15 +65,15 @@ foreach($default_attributes as $key => $value) {
 						break;
 				}
 			}
-			$f = $modules->get($type);
+			$f = $this->modules->get($type);
 			// Add options
 			$select_options_string = $options[$key];
-			$data = $modules->getModuleConfigData('TextformatterHannaCode');
-			$open_tag = !empty($data['openTag']) ? $data['openTag'] : '[[';
+			$data = $this->modules->getModuleConfigData('TextformatterHannaCode');
+			$open_tag = !empty($data['openTag']) ? $data['openTag'] : \TextformatterHannaCode::DEFAULT_OPEN_TAG;
 			if(strpos($select_options_string, $open_tag) !== false) {
-				$modules->TextformatterHannaCode->formatValue($edited_page, new Field(), $select_options_string);
+				$this->modules->TextformatterHannaCode->formatValue($edited_page, new Field(), $select_options_string);
 			}
-			$select_options = $modules->HannaCodeDialog->prepareOptions($select_options_string, $key, $tag_name, $edited_page);
+			$select_options = $this->modules->HannaCodeDialog->prepareOptions($select_options_string, $key, $tag_name, $edited_page);
 			if(array_values($select_options) === $select_options) {
 				// Regular array
 				foreach($select_options as $select_option) {
@@ -105,7 +105,7 @@ foreach($default_attributes as $key => $value) {
 						break;
 				}
 			}
-			$f = $modules->get($type);
+			$f = $this->modules->get($type);
 		}
 		// Set other field attributes
 		$f->attr('id+name', $key);
