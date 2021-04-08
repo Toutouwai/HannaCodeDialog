@@ -8,13 +8,13 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 	public static function getModuleInfo() {
 		return array(
 			'title' => 'Hanna Code Dialog',
-			'version' => '0.3.6',
+			'version' => '0.4.0',
 			'summary' => 'Enhances the use of Hanna tags in CKEditor fields, including the dialog-based editing of Hanna tags.',
 			'author' => 'Robin Sallis',
 			'icon' => 'clone',
 			'autoload' => 'template=admin',
 			'singular' => true,
-			'requires' => 'ProcessWire>=3.0.0, TextformatterHannaCode, PHP>=5.4.0',
+			'requires' => 'ProcessWire>=3.0.0, TextformatterHannaCode>=0.3.0, PHP>=5.4.0',
 		);
 	}
 
@@ -83,8 +83,8 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 		$settings = [];
 		$data = $this->wire()->modules->getModuleConfigData('TextformatterHannaCode');
 		$settings['iframe_path'] = "{$this->wire()->input->url}?id={$edited_page->id}&modal=1";
-		$settings['open_tag'] = !empty($data['openTag']) ? $data['openTag'] : \TextformatterHannaCode::DEFAULT_OPEN_TAG;
-		$settings['close_tag'] = !empty($data['closeTag']) ? $data['closeTag'] : \TextformatterHannaCode::DEFAULT_CLOSE_TAG;
+		$settings['open_tag'] = !empty($data['openTag']) ? $data['openTag'] : '[[';
+		$settings['close_tag'] = !empty($data['closeTag']) ? $data['closeTag'] : ']]';
 		$settings['hanna_tags'] = $this->getDropdownTags($edited_page);
 		$settings['tags_no_attributes'] = $this->tags_no_attributes;
 		$settings['widget_colour'] = $this->widget_colour ?: '#d3eaf2';
@@ -109,6 +109,7 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 		$config = $this->wire()->config;
 		$input = $this->wire()->input;
 		$admin_theme = $this->wire()->adminTheme;
+		$hanna = $this->wire()->modules->get('TextformatterHannaCode');
 
 		// Get tag
 		$tag = $input->get->textarea('tag');
@@ -128,7 +129,7 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 		// Make sure the page is actually editable by the current user
 		if($edited_page->id && $edited_page->editable) {
 			$inputfield_name = $input->get->fieldName('field_name');
-			$current_attributes = $this->getAttributes($tag);
+			$current_attributes = $hanna->getAttributes($tag);
 			if(!isset($current_attributes['name'])) $current_attributes['name'] = trim($tag);
 			$vars = [
 				'current_attributes' => $current_attributes,
@@ -151,31 +152,21 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 	 * @return array
 	 */
 	public function getHannaTags($name_only = false, $filter_tags = false) {
-		// Instantiate TextformatterHannaCode
 		$hanna = $this->wire()->modules->get('TextformatterHannaCode');
-		// Fetch Hanna Code tags from database
 		$tags = [];
 		$tags_no_attributes = [];
-
-		$sql = "SELECT name, code FROM hanna_code ORDER BY name";
-		$query = $this->wire()->database->prepare($sql);
-		$query->execute();
-		while($row = $query->fetch(\PDO::FETCH_NUM)) {
-			list($name, $code) = $row;
+		$hanna_codes = $hanna->hannaCodes()->getAll();
+		foreach($hanna_codes as $hanna_code) {
 			// If this tag has no attributes then add it to $tags_no_attributes
-			if(strpos($code, 'hc_attr*/') === false) $tags_no_attributes[] = $name;
+			if(empty($hanna_code->attrs)) $tags_no_attributes[] = $hanna_code->name;
 			if($name_only) {
 				if($filter_tags) {
 					$exclude_prefix = $this->exclude_prefix ?: '_';
-					if((is_array($this->exclude_selection) && in_array($name, $this->exclude_selection)) || strpos($name, $exclude_prefix) === 0) continue;
+					if((is_array($this->exclude_selection) && in_array($hanna_code->name, $this->exclude_selection)) || strpos($hanna_code->name, $exclude_prefix) === 0) continue;
 				}
-				$tags[] = $name;
+				$tags[] = $hanna_code->name;
 			} else {
-				$attrs = [];
-				foreach($hanna->extractDefaultCodeAttrs($code) as $attr_name => $attr_value) {
-					$attrs[$attr_name] = $attr_value;
-				}
-				$tags[$name] = $attrs;
+				$tags[$hanna_code->name] = $hanna_code->attrs;
 			}
 		}
 		$this->tags_no_attributes = $tags_no_attributes;
@@ -223,45 +214,6 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 	public function ___prepareOptions($options_string, $attribute_name, $tag_name, $page) {
 		$options = explode('|', $options_string);
 		return $options;
-	}
-
-	/**
-	 * Find an return an array of all attributes in string $expression
-	 * Lifted from TextformatterHannaCode
-	 *
-	 * @param string $expression
-	 * @return array
-	 *
-	 */
-	protected function getAttributes($expression) {
-		$attrs = [];
-		$regx =
-			'!(?:^|\b)' .		    // beginning or boundary
-			'([-_a-z0-9]+)' .	    // 1. attribute name
-			'\s*=\s*' . 		    // Equals
-			'(' .				    // 2. attribute value, possibly with quotes
-			'(["\']|&quot;)' .	    // 3. open quote
-			'.*?' . 		        // attribute value unquoted
-			'\3' .			        // close quote
-			'|' .				    // OR
-			'[^\'",\s]*' .		    // unquoted value...
-			'),?' . 			    // optional comma, per PW selector style
-			'!i';
-		if(!preg_match_all($regx, $expression, $matches)) {
-			return $attrs;
-		}
-		foreach($matches[1] as $key => $name) {
-			$attrs[$name] = trim($matches[2][$key], "'\"");
-		}
-		if(empty($attrs['name'])) {
-			// allow for optional [[name_here attrs]] expression
-			// where the 'name' isn't specifically called out as an attribute
-			// but is the first symbol in the expression
-			if(preg_match('!^([-_a-z0-9]+)([\s,]|$)!i', $expression, $matches)) {
-				$attrs['name'] = $matches[1];
-			}
-		}
-		return $attrs;
 	}
 
 	/**

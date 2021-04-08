@@ -1,10 +1,12 @@
-.cke_combo__hannadropdown .cke_combo_text { width:auto; }
-div[name=hanna_iframe_wrap] .cke_dialog_ui_vbox_child { padding:0; }
-div[name=hanna_iframe_wrap] iframe { background:url('img/loading.gif') center center no-repeat; }
+.cke_combo__hannadropdown .cke_combo_text {
+  width: auto; }
 
-/* Retina */
-@media only screen and (-webkit-min-device-pixel-ratio:1.3),
-only screen and (-o-min-device-pixel-ratio:13/10),
-only screen and (min-resolution:120dpi) {
-	div[name=hanna_iframe_wrap] iframe { background-image:url('img/loading@2x.gif'); background-size:32px 32px; }
-}
+div[name=hanna_iframe_wrap] .cke_dialog_ui_vbox_child {
+  padding: 0; }
+div[name=hanna_iframe_wrap] iframe {
+  background: url("img/loading.gif") center center no-repeat; }
+
+@media only screen and (-webkit-min-device-pixel-ratio: 1.3), only screen and (-o-min-device-pixel-ratio: 13 / 10), only screen and (min-resolution: 120dpi) {
+  div[name=hanna_iframe_wrap] iframe {
+    background-image: url("img/loading@2x.gif");
+    background-size: 32px 32px; } }
