@@ -8,7 +8,7 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 	public static function getModuleInfo() {
 		return array(
 			'title' => 'Hanna Code Dialog',
-			'version' => '0.4.0',
+			'version' => '0.4.1',
 			'summary' => 'Enhances the use of Hanna tags in CKEditor fields, including the dialog-based editing of Hanna tags.',
 			'author' => 'Robin Sallis',
 			'icon' => 'clone',
@@ -227,8 +227,10 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 		$inputfield = $event->object;
 		$field = $inputfield->hasField;
 		if(!$field) return;
-		$textformatters = $field->textformatters;
-		if(!is_array($textformatters) || !in_array('TextformatterHannaCode', $textformatters)) return;
+		if(!$this->force_plugins) {
+			$textformatters = $field->textformatters;
+			if(!is_array($textformatters) || !in_array('TextformatterHannaCode', $textformatters)) return;
+		}
 		$config_name = "InputfieldCKEditor_{$field->name}";
 		$config_name_matrix = "InputfieldCKEditor_{$field->name}_matrix";
 		$config = $this->wire()->config;
@@ -359,12 +361,20 @@ EOT;
 		$f->value = $this->$f_name ?: 420;
 		$inputfields->add($f);
 
+		/* @var InputfieldCheckbox $f */
+		$f = $modules->get('InputfieldCheckbox');
+		$f_name = 'force_plugins';
+		$f->name = $f_name;
+		$f->label = $this->_('Load HannaCodeDialog CKEditor plugins even if TextformatterHannaCode is not applied to field');
+		$f->checked = $this->$f_name === 1 ? 'checked' : '';
+		$inputfields->add($f);
+
 		if($modules->isInstalled('TracyDebugger')) {
 			/* @var InputfieldCheckbox $f */
 			$f = $modules->get('InputfieldCheckbox');
 			$f_name = 'show_tracy';
 			$f->name = $f_name;
-			$f->label = $this->_('Show Tracy Debugger bar in dialog');
+			$f->label = $this->_('Allow Tracy Debugger bar in dialog');
 			$f->checked = $this->$f_name === 1 ? 'checked' : '';
 			$inputfields->add($f);
 		}
