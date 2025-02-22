@@ -1,3 +1,5 @@
+var hcd_config = ProcessWire.config.HannaCodeDialog;
+
 // Escape string for regex
 function escapeRegExp(str) {
 	return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
@@ -36,7 +38,7 @@ CKEDITOR.plugins.add( 'hannadialog', {
 
 			edit: function() {
 				// Set tag variable to name of tag being edited
-				tag = this.data.name.trim();
+				hcd_tag = this.data.name.trim();
 			}
 		} );
 

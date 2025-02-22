@@ -1,3 +1,5 @@
+var hcd_config = ProcessWire.config.HannaCodeDialog;
+
 CKEDITOR.plugins.add('hannadropdown', {
 	requires : ['richcombo'],
 	init : function( editor ) {
@@ -27,7 +29,7 @@ CKEDITOR.plugins.add('hannadropdown', {
 				if(hcd_config.tags_no_attributes.indexOf(value) !== -1) {
 					editor.insertHtml(hcd_config.open_tag + value + hcd_config.close_tag);
 				} else {
-					tag = value;
+					hcd_tag = value;
 					editor.openDialog('hannadialog');
 				}
 			}

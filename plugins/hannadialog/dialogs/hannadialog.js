@@ -1,7 +1,8 @@
+var hcd_config = ProcessWire.config.HannaCodeDialog;
 var $dialog_iframe = null;
 
-function iframeSrc(tag, field_name) {
-	return hcd_config.iframe_path + '&tag=' + encodeURIComponent(tag) + '&field_name=' + field_name;
+function iframeSrc(hcd_tag, field_name) {
+	return hcd_config.iframe_path + '&tag=' + encodeURIComponent(hcd_tag) + '&field_name=' + field_name;
 }
 
 CKEDITOR.dialog.add( 'hannadialog', function( editor ) {
@@ -17,7 +18,7 @@ CKEDITOR.dialog.add( 'hannadialog', function( editor ) {
 				elements : [
 					{
 						type: 'html',
-						html: '<iframe id="hanna_iframe_' + editor.id + '" src="' + iframeSrc(tag, field_name) + '" frameborder="0" style="width:' + hcd_config.dialog_width + 'px; height:' + hcd_config.dialog_height + 'px;"></iframe>'
+						html: '<iframe id="hanna_iframe_' + editor.id + '" src="' + iframeSrc(hcd_tag, field_name) + '" frameborder="0" style="width:' + hcd_config.dialog_width + 'px; height:' + hcd_config.dialog_height + 'px;"></iframe>'
 					}
 				]
 			}
@@ -25,7 +26,7 @@ CKEDITOR.dialog.add( 'hannadialog', function( editor ) {
 		onShow: function() {
 			var iframe = this.getElement().getDocument().getById('hanna_iframe_' + editor.id);
 			$dialog_iframe = $('#' + iframe.getAttribute('id')); // iframe to jQuery object
-			iframe.setAttribute('src', iframeSrc(tag, field_name));
+			iframe.setAttribute('src', iframeSrc(hcd_tag, field_name));
 		},
 		onCancel: function() {
 			// Clear src to avoid flash of old iframe src on next load
