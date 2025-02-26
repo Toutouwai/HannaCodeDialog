@@ -8,7 +8,7 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 	public static function getModuleInfo() {
 		return array(
 			'title' => 'Hanna Code Dialog',
-			'version' => '0.5.0',
+			'version' => '0.5.1',
 			'summary' => 'Enhances the use of Hanna tags in CKEditor fields, including the dialog-based editing of Hanna tags.',
 			'author' => 'Robin Sallis',
 			'icon' => 'clone',
@@ -83,22 +83,20 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 		$admin_theme = $this->wire()->adminTheme;
 		$hanna = $this->wire()->modules->get('TextformatterHannaCode');
 
+		// Required parameters must be present
+		$tag = $input->get->textarea('tag');
+		$process_name = $input->get->text('process');
+		$id = (int) $input->get('pid');
+		$inputfield_name = $input->get->fieldName('field_name');
+		if(!$tag || !$process_name || !$id || !$inputfield_name) return;
+
 		// Replace the method
 		$event->replace = true;
 
-		// Get tag
-		$tag = $input->get->textarea('tag');
-		if(!$tag) {
-			$event->return = $this->_("Tag parameter is missing.");
-			return;
-		}
-
 		// Get edited page
-		$process_name = $input->get->text('process');
 		if($process_name === 'ProcessProfile') {
 			$edited_page = $event->wire()->user;
 		} else {
-			$id = (int) $input->get('pid');
 			$edited_page = $this->wire()->pages->get($id);
 			// Return early if the page is not editable
 			if(!$edited_page->id || !$edited_page->editable) {
@@ -109,9 +107,10 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 
 		// Add class to body tag
 		$admin_theme->addBodyClass('HannaCodeDialog');
-		$inputfield_name = $input->get->fieldName('field_name');
+		// Get current attributes
 		$current_attributes = $hanna->getAttributes($tag);
 		if(!isset($current_attributes['name'])) $current_attributes['name'] = trim($tag);
+		// Render form
 		$vars = [
 			'current_attributes' => $current_attributes,
 			'hanna_tags' => $this->getHannaTags(),
