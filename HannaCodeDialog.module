@@ -8,7 +8,7 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 	public static function getModuleInfo() {
 		return array(
 			'title' => 'Hanna Code Dialog',
-			'version' => '0.5.1',
+			'version' => '0.5.2',
 			'summary' => 'Enhances the use of Hanna tags in CKEditor fields, including the dialog-based editing of Hanna tags.',
 			'author' => 'Robin Sallis',
 			'icon' => 'clone',
@@ -234,6 +234,12 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 		$version = $info['version'];
 		$config->styles->add($config->urls->{$this} . "{$this}.css?v={$version}");
 		$config->scripts->add($config->urls->{$this} . "{$this}.js?v={$version}");
+
+		// CKEditor JS settings
+		$settings = $config->js('InputfieldCKEditor');
+		// Modify CKEditor timestamp property for cache busting of plugin files
+		$settings['timestamp'] .= '.' . $version;
+		$config->js('InputfieldCKEditor', $settings);
 	}
 
 	/**
