@@ -8,7 +8,7 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 	public static function getModuleInfo() {
 		return array(
 			'title' => 'Hanna Code Dialog',
-			'version' => '0.5.2',
+			'version' => '0.5.3',
 			'summary' => 'Enhances the use of Hanna tags in CKEditor fields, including the dialog-based editing of Hanna tags.',
 			'author' => 'Robin Sallis',
 			'icon' => 'clone',
@@ -220,7 +220,7 @@ class HannaCodeDialog extends WireData implements Module, ConfigurableModule {
 				$key === $config_name ||
 				strpos($key, $config_name_matrix) === 0 ||
 				strpos($key, $config_name_repeater_context) === 0 ||
-				isset($value['extraPlugins']) // ProFields Table
+				is_array($value) && isset($value['extraPlugins']) // ProFields Table
 			) {
 				if(strpos($js_config[$key]['extraPlugins'], 'hannadropdown,hannadialog') === false) {
 					$js_config[$key]['extraPlugins'] .= ',hannadropdown,hannadialog';
